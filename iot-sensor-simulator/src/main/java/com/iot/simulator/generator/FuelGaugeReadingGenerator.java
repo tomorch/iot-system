@@ -1,8 +1,8 @@
 package com.iot.simulator.generator;
 
+import com.iot.model.SensorReading;
 import com.iot.simulator.config.DeviceConfig;
 import com.iot.simulator.config.SensorGroupConfig;
-import com.iot.simulator.model.SensorReading;
 import com.iot.simulator.utils.DateFormat;
 import org.springframework.stereotype.Component;
 

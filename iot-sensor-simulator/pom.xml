@@ -5,7 +5,6 @@
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- updated to reference parent pom -->
     <parent>
         <groupId>com.iot.system</groupId>
         <artifactId>iot-system</artifactId>
@@ -19,6 +18,11 @@
     <description>IoT Sensor Data Simulator with Kafka Producer</description>
 
     <dependencies>
+        <dependency>
+            <groupId>com.iot.system</groupId>
+            <artifactId>iot-sensor-model</artifactId>
+        </dependency>
+
         <!-- Spring Boot Starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

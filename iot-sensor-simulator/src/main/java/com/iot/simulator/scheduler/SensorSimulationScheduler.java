@@ -1,10 +1,10 @@
 package com.iot.simulator.scheduler;
 
+import com.iot.model.SensorReading;
 import com.iot.simulator.config.DeviceConfig;
 import com.iot.simulator.config.SensorGroupConfig;
 import com.iot.simulator.config.SimulatorConfig;
 import com.iot.simulator.generator.ISensorReadingGenerator;
-import com.iot.simulator.model.SensorReading;
 import com.iot.simulator.service.KafkaProducerService;
 import com.iot.simulator.service.SensorGroupsReadingGeneratorProvider;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -9,7 +9,7 @@ spring:
 
 logging:
   level:
-    root: DEBUG
-    com.iot.simulator: DEBUG
+    root: INFO
+    com.iot.simulator: INFO
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
