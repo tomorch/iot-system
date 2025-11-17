@@ -23,6 +23,7 @@ public class FuelGaugeReadingGenerator implements ISensorReadingGenerator {
         return new SensorReading(
             UUID.randomUUID().toString(),
             deviceConfig.id(),
+            sensorGroupConfig.type(),
             deviceConfig.groupId(),
             Math.round(fuelLevel * 100.0) / 100.0,
             UNIT,

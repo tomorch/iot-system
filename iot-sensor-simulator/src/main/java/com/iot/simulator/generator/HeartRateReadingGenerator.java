@@ -22,6 +22,7 @@ public class HeartRateReadingGenerator implements ISensorReadingGenerator {
         return new SensorReading(
             UUID.randomUUID().toString(),
             deviceConfig.id(),
+            sensorGroupConfig.type(),
             deviceConfig.groupId(),
             Math.round(heartRate),
             UNIT,

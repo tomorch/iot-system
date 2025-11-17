@@ -22,6 +22,7 @@ public class ThermostatReadingGenerator implements ISensorReadingGenerator {
         return new SensorReading(
             UUID.randomUUID().toString(),
             deviceConfig.id(),
+            sensorGroupConfig.type(),
             deviceConfig.groupId(),
             Math.round(temperature * 100.0) / 100.0,
             UNIT,

@@ -26,7 +26,7 @@ public class KafkaProducerService {
             Message<SensorReading> message = MessageBuilder
                     .withPayload(reading)
                     .setHeader(KafkaHeaders.TOPIC, topic)
-                    .setHeader(KafkaHeaders.KEY, reading.id())
+                    .setHeader(KafkaHeaders.KEY, reading.deviceId())
                     .build();
 
             kafkaTemplate.send(message);
