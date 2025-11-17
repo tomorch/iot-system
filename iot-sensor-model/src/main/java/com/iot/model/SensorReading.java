@@ -7,5 +7,5 @@ public record SensorReading(
         String groupId,
         double value,
         String unit,
-        String timestamp) {
+        long timestamp) {
 }

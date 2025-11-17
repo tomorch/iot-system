@@ -14,11 +14,13 @@
     <description>Parent POM for IoT System components</description>
 
     <properties>
-        <java.version>25</java.version>
-        <maven.compiler.source>25</maven.compiler.source>
-        <maven.compiler.target>25</maven.compiler.target>
+        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring-boot.version>3.5.7</spring-boot.version>
+        <kafka.version>3.3.10</kafka.version>
+        <jackson.version>2.19.2</jackson.version>
     </properties>
 
     <modules>
@@ -26,23 +28,5 @@
         <module>iot-sensor-simulator</module>
         <module>iot-sensor-reading-collector</module>
     </modules>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.iot.system</groupId>
-                <artifactId>iot-sensor-model</artifactId>
-                <version>${version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-parent</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 </project>

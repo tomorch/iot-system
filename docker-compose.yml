@@ -23,6 +23,7 @@ services:
 
   init-kafka:
     image: apache/kafka:3.9.1
+    container_name: "init-kafka"
     depends_on:
       - kafka
     entrypoint: ["/bin/sh", "-c"]
@@ -32,3 +33,12 @@ services:
        /opt/kafka/bin/kafka-topics.sh --create --topic sensor-readings --partitions 3 --replication-factor 1 --bootstrap-server kafka:9092
       echo 'Kafka topics created...'
       "
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    restart: unless-stopped

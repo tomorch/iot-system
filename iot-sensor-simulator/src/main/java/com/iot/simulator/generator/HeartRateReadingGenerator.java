@@ -3,10 +3,8 @@ package com.iot.simulator.generator;
 import com.iot.model.SensorReading;
 import com.iot.simulator.config.DeviceConfig;
 import com.iot.simulator.config.SensorGroupConfig;
-import com.iot.simulator.utils.DateFormat;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.UUID;
 
@@ -26,7 +24,7 @@ public class HeartRateReadingGenerator implements ISensorReadingGenerator {
             deviceConfig.groupId(),
             Math.round(heartRate),
             UNIT,
-            DateFormat.format(LocalDateTime.now())
+            System.currentTimeMillis()
         );
     }
 }
