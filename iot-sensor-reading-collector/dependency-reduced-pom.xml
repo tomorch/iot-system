@@ -41,9 +41,9 @@
     </dependency>
   </dependencies>
   <properties>
+    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.source>17</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.target>25</maven.compiler.target>
     <flink.version>1.20.3</flink.version>
-    <maven.compiler.source>25</maven.compiler.source>
   </properties>
 </project>

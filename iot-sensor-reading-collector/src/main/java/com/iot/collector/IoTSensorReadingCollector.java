@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 public class IoTSensorReadingCollector {
     private static final Logger log = LoggerFactory.getLogger(IoTSensorReadingCollector.class);
 
-    static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         JsonDeserializationSchema<SensorReading> jsonDeserializationSchema =
