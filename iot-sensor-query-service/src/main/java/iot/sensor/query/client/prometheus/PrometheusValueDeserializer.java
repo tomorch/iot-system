@@ -1,6 +1,5 @@
 package iot.sensor.query.client.prometheus;
 
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JavaType;
@@ -28,7 +27,7 @@ public class PrometheusValueDeserializer extends StdDeserializer<PrometheusValue
     }
 
     @Override
-    public PrometheusValue deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
+    public PrometheusValue deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         JsonNode node = jsonParser.getCodec().readTree(jsonParser);
         if (node.isArray() && node.size() == 2) {
             String timestamp = node.get(0).asText();

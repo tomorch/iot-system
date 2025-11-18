@@ -1,7 +1,6 @@
 package iot.sensor.query.controller;
 
 import iot.sensor.query.client.ISensorQueryClient;
-import iot.sensor.query.exception.BadRequestException;
 import iot.sensor.query.model.SensorQueryResponse;
 import iot.sensor.query.model.SensorQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
