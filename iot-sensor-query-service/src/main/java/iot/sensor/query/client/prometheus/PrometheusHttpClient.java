@@ -21,8 +21,12 @@ public class PrometheusHttpClient {
     @Autowired
     private PrometheusHttpClientConfig config;
 
-    private final HttpClient httpClient = HttpClient.newHttpClient();
+    private final HttpClient httpClient = getHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    protected HttpClient getHttpClient() {
+        return HttpClient.newHttpClient();
+    }
 
     public PrometheusQueryResponse sendQuery(String path, String query) {
         try {
