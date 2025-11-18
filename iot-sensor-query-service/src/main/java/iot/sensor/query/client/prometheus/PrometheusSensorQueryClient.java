@@ -2,76 +2,45 @@ package iot.sensor.query.client.prometheus;
 
 import iot.sensor.query.client.ISensorQueryClient;
 import iot.sensor.query.client.prometheus.response.PrometheusQueryResponse;
-import iot.sensor.query.client.prometheus.response.PrometheusResult;
-import iot.sensor.query.model.SensorInfo;
 import iot.sensor.query.model.SensorQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.text.SimpleDateFormat;
 
 @Service
 public class PrometheusSensorQueryClient implements ISensorQueryClient {
+    private static final int DEFAULT_STEP_SECONDS = 15;
+    private static final String QUERY_PATH = "/query_range";
+
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
     @Autowired
-    private PrometheusHttpClient prometheusHttpClient;
+    private PrometheusHttpClient httpClient;
+
+    @Autowired
+    private PrometheusResponseTransformer responseTransformer;
 
     @Override
-    public SensorQueryResult executeSensorQuery(String sensorId, String timeStart, String timeEnd, String time) {
-        String query = String.format("query=sensor_value{sensor_id=\"%s\"}", sensorId);
-        String path = (time != null)? "/query" : "/query_range";
-
-        if(time != null) {
-            query += String.format("&time=%s", time);
-        } else {
-            query += "&step=15s";
-            if(timeStart != null) {
-                query += String.format("&start=%s", timeStart);
-            }
-            if(timeEnd != null) {
-                query += String.format("&end=%s", timeEnd);
-            }
+    public SensorQueryResult executeSensorQuery(String sensorId, String start, String end) {
+        try {
+            dateFormat.parse(start);
+            dateFormat.parse(end);
+        } catch (Exception e) {
+            throw new RuntimeException("failed to query prometheus - invalid date format for either start or end date");
         }
 
-        PrometheusQueryResponse response = prometheusHttpClient.sendQuery(path, query);
+        String query = String.format("query=sensor_value{sensor_id=\"%s\"}", sensorId)
+            + String.format("&step=%ds", DEFAULT_STEP_SECONDS)
+            + String.format("&start=%s", start)
+            + String.format("&end=%s", end);
+
+        PrometheusQueryResponse response = httpClient.sendQuery(QUERY_PATH, query);
 
         if(response == null || !response.status().equals("success") ) {
             throw new RuntimeException("failed to query prometheus");
         } else {
-            Optional<SensorInfo> sensorInfo = response.data().result().stream()
-                .findFirst().map(result ->
-                    new SensorInfo(
-                        result.metric().sensor_id(),
-                        result.metric().sensor_type(), result.metric().group_id()));
-
-            if(sensorInfo.isEmpty()) {
-                return null;
-            }
-
-            long count = response.data().result().size();
-            double min = Double.MAX_VALUE;
-            double max = Double.MIN_VALUE;
-            double total = 0;
-
-            Double[] values = new Double[response.data().result().size()];
-            int index = 0;
-
-            for(PrometheusResult result : response.data().result()) {
-                double value = Double.parseDouble(result.values()[0].value());
-
-                if(value < min) min = value;
-                if(value > max) max = value;
-
-                total += value;
-
-                values[index++] = value;
-            }
-
-            double mean = total / count;
-            double median = count % 2 == 0 ?
-                (values[(int)count/2 - 1] + values[(int)count/2]) / 2 :
-                values[(int)count/2];
-
-            return new SensorQueryResult(sensorInfo.get(), mean, median, min, max, count);
+            return responseTransformer.transformToSensorQueryResult(response);
         }
     }
 }

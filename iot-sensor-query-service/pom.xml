@@ -7,6 +7,7 @@
     <groupId>tomorch</groupId>
     <artifactId>iot-sensor-query-service</artifactId>
     <packaging>war</packaging>
+    <name>IoT Sensor Query Service</name>
 
     <parent>
         <groupId>com.iot.system</groupId>

@@ -16,15 +16,10 @@ public class SensorQueryRestController {
     @GetMapping(path = "/{sensorId}", produces = "application/json")
     public SensorQueryResponse querySensorReadings(
             @PathVariable(name = "sensorId") String sensorId,
-            @RequestParam(required = false, name = "timeStart") String timeStart,
-            @RequestParam(required = false, name = "timeEnd") String timeEnd,
-            @RequestParam(required = false, name = "time") String time) {
+            @RequestParam(name = "start") String start,
+            @RequestParam(name = "end") String end) {
 
-        if(timeStart == null && time == null && timeEnd == null) {
-            throw new BadRequestException("At least one of timeStart, timeLast, or timeEnd must be provided.");
-        }
-
-        SensorQueryResult sensorQueryResult = sensorQueryClient.executeSensorQuery(sensorId, timeStart, timeEnd, time);
+        SensorQueryResult sensorQueryResult = sensorQueryClient.executeSensorQuery(sensorId, start, end);
 
         return new SensorQueryResponse(sensorQueryResult);
     }
