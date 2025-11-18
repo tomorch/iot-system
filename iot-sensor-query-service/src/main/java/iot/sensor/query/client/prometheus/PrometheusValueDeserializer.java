@@ -1,0 +1,41 @@
+package iot.sensor.query.client.prometheus;
+
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import iot.sensor.query.client.prometheus.response.PrometheusValue;
+
+import java.io.IOException;
+
+public class PrometheusValueDeserializer extends StdDeserializer<PrometheusValue> {
+    public PrometheusValueDeserializer() {
+        super(PrometheusValue.class);
+    }
+
+    protected PrometheusValueDeserializer(Class<?> vc) {
+        super(vc);
+    }
+
+    protected PrometheusValueDeserializer(JavaType valueType) {
+        super(valueType);
+    }
+
+    protected PrometheusValueDeserializer(StdDeserializer<?> src) {
+        super(src);
+    }
+
+    @Override
+    public PrometheusValue deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
+        JsonNode node = jsonParser.getCodec().readTree(jsonParser);
+        if (node.isArray() && node.size() == 2) {
+            String timestamp = node.get(0).asText();
+            String value = node.get(1).asText();
+            return new PrometheusValue(Long.parseLong(timestamp), value);
+        } else {
+            throw new RuntimeException("Invalid PrometheusValue format");
+        }
+    }
+}

@@ -1,7 +1,7 @@
 package com.iot.simulator.generator;
 
 import com.iot.model.SensorReading;
-import com.iot.simulator.config.DeviceConfig;
+import com.iot.simulator.config.SensorConfig;
 import com.iot.simulator.config.SensorGroupConfig;
 import org.springframework.stereotype.Component;
 
@@ -14,16 +14,15 @@ public class HeartRateReadingGenerator implements ISensorReadingGenerator {
     private static final String UNIT = "bpm";
 
     @Override
-    public SensorReading generateSensorReading(SensorGroupConfig sensorGroupConfig, DeviceConfig deviceConfig) {
+    public SensorReading generateSensorReading(SensorGroupConfig sensorGroupConfig, SensorConfig sensorConfig) {
         double heartRate = 50 + random.nextDouble() * 100; // 50-150 bpm
 
         return new SensorReading(
             UUID.randomUUID().toString(),
-            deviceConfig.id(),
+            sensorConfig.id(),
             sensorGroupConfig.type(),
-            deviceConfig.groupId(),
+            sensorConfig.groupId(),
             Math.round(heartRate),
-            UNIT,
             System.currentTimeMillis()
         );
     }

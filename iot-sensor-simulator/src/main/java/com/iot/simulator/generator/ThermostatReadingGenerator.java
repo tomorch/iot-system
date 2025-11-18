@@ -1,7 +1,7 @@
 package com.iot.simulator.generator;
 
 import com.iot.model.SensorReading;
-import com.iot.simulator.config.DeviceConfig;
+import com.iot.simulator.config.SensorConfig;
 import com.iot.simulator.config.SensorGroupConfig;
 import org.springframework.stereotype.Component;
 
@@ -14,16 +14,15 @@ public class ThermostatReadingGenerator implements ISensorReadingGenerator {
     private static final String UNIT = "C";
 
     @Override
-    public SensorReading generateSensorReading(SensorGroupConfig sensorGroupConfig, DeviceConfig deviceConfig) {
+    public SensorReading generateSensorReading(SensorGroupConfig sensorGroupConfig, SensorConfig sensorConfig) {
         double temperature = 15 + random.nextDouble() * 20; // 15-35°C
 
         return new SensorReading(
             UUID.randomUUID().toString(),
-            deviceConfig.id(),
+            sensorConfig.id(),
             sensorGroupConfig.type(),
-            deviceConfig.groupId(),
+            sensorConfig.groupId(),
             Math.round(temperature * 100.0) / 100.0,
-            UNIT,
             System.currentTimeMillis()
         );
     }

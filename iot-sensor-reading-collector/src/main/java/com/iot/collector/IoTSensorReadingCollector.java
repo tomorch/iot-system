@@ -33,14 +33,14 @@ public class IoTSensorReadingCollector {
                 .build();
 
         env.fromSource(source, WatermarkStrategy.noWatermarks(), "Sensor Reading Source")
-            .keyBy(SensorReading::deviceId)
+            .keyBy(SensorReading::sensorId)
             .process(new ProcessFunction<SensorReading, PrometheusTimeSeries>() {
                 @Override
                 public void processElement(SensorReading sensorReading, ProcessFunction<SensorReading, PrometheusTimeSeries>.Context context, Collector<PrometheusTimeSeries> collector) {
                     log.info("received reading: {}", sensorReading);
                     PrometheusTimeSeries timeSeries = PrometheusTimeSeries.builder()
                         .withMetricName("sensor_value")
-                        .addLabel("device_id", sensorReading.deviceId())
+                        .addLabel("sensor_id", sensorReading.sensorId())
                         .addLabel("sensor_type", sensorReading.sensorType())
                         .addLabel("group_id", sensorReading.groupId())
                         .addLabel("reading_id", sensorReading.id())

@@ -26,12 +26,12 @@ public class KafkaProducerService {
             Message<SensorReading> message = MessageBuilder
                     .withPayload(reading)
                     .setHeader(KafkaHeaders.TOPIC, topic)
-                    .setHeader(KafkaHeaders.KEY, reading.deviceId())
+                    .setHeader(KafkaHeaders.KEY, reading.sensorId())
                     .build();
 
             kafkaTemplate.send(message);
-            logger.debug("Published {} from device {} to topic {}",
-                    reading, reading.deviceId(), topic);
+            logger.debug("Published {} from sensor {} to topic {}",
+                    reading, reading.sensorId(), topic);
         } catch (Exception e) {
             logger.error("Failed to publish reading to topic {}: {}", topic, e.getMessage(), e);
         }

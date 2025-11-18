@@ -1,7 +1,7 @@
 package com.iot.simulator.scheduler;
 
 import com.iot.model.SensorReading;
-import com.iot.simulator.config.DeviceConfig;
+import com.iot.simulator.config.SensorConfig;
 import com.iot.simulator.config.SensorGroupConfig;
 import com.iot.simulator.config.SimulatorConfig;
 import com.iot.simulator.generator.ISensorReadingGenerator;
@@ -35,8 +35,8 @@ public class SensorSimulationScheduler {
             ISensorReadingGenerator sensorReadingGenerator =
                     readingGeneratorProvider.getSensorReadingGeneratorBySensorType(sensorGroupConfig.type());
 
-            sensorGroupConfig.deviceConfigs().stream().forEach(deviceConfig -> {
-                SensorReading sensorReading = sensorReadingGenerator.generateSensorReading(sensorGroupConfig, deviceConfig);
+            sensorGroupConfig.sensorConfigs().stream().forEach(sensorConfig -> {
+                SensorReading sensorReading = sensorReadingGenerator.generateSensorReading(sensorGroupConfig, sensorConfig);
 
                 if (sensorReading != null) {
                     kafkaProducerService.publishReading(sensorReading, sensorGroupConfig.topic());
@@ -46,23 +46,23 @@ public class SensorSimulationScheduler {
     }
 
     private SimulatorConfig loadSimulatorConfig() {
-        List<DeviceConfig> thermostats = Arrays.asList(
-                new DeviceConfig("therm01", "home", "Living Room"),
-                new DeviceConfig("therm02", "home", "Master Bedroom"),
-                new DeviceConfig("therm03", "work", "Office"),
-                new DeviceConfig("therm04", "work", "Kitchen")
+        List<SensorConfig> thermostats = Arrays.asList(
+                new SensorConfig("therm01", "home", "Living Room"),
+                new SensorConfig("therm02", "home", "Master Bedroom"),
+                new SensorConfig("therm03", "work", "Office"),
+                new SensorConfig("therm04", "work", "Kitchen")
         );
 
-        List<DeviceConfig> heartRateMonitors = Arrays.asList(
-                new DeviceConfig("hm01", "fitness", "Alice"),
-                new DeviceConfig("hm02", "fitness", "John"),
-                new DeviceConfig("hm03", "medical", "Fred")
+        List<SensorConfig> heartRateMonitors = Arrays.asList(
+                new SensorConfig("hm01", "fitness", "Alice"),
+                new SensorConfig("hm02", "fitness", "John"),
+                new SensorConfig("hm03", "medical", "Fred")
         );
 
-        List<DeviceConfig> fuelGauges = Arrays.asList(
-                new DeviceConfig("fg01", "personal", "Tim's Car"),
-                new DeviceConfig("fg02", "personal", "Joan's Car"),
-                new DeviceConfig("fg03", "work", "Joan's Van")
+        List<SensorConfig> fuelGauges = Arrays.asList(
+                new SensorConfig("fg01", "personal", "Tim's Car"),
+                new SensorConfig("fg02", "personal", "Joan's Car"),
+                new SensorConfig("fg03", "work", "Joan's Van")
         );
 
         List<SensorGroupConfig> sensorGroupConfigs = Arrays.asList(
