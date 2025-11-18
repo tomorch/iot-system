@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import iot.sensor.query.client.prometheus.response.PrometheusQueryResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -17,7 +18,9 @@ import java.net.http.HttpResponse;
 public class PrometheusHttpClient {
     private static final Logger log = LoggerFactory.getLogger(PrometheusHttpClient.class);
 
-    private static final String PROMETHEUS_BASE_URL = "http://localhost:9090/api/v1";
+    @Autowired
+    private PrometheusHttpClientConfig config;
+
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -26,7 +29,7 @@ public class PrometheusHttpClient {
             log.info("sending prometheus query to path: {}, query: {}", path, query);
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI(PROMETHEUS_BASE_URL + path))
+                    .uri(new URI(config.getBaseUrl() + path))
                     .header("Content-Type", "application/x-www-form-urlencoded")
                     .POST(HttpRequest.BodyPublishers.ofString(query))
                     .build();
