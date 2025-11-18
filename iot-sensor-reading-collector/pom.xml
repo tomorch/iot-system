@@ -67,41 +67,11 @@
             <version>${flink.version}</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-connector-kafka</artifactId>
             <version>4.0.1-2.0</version>
         </dependency>
-
-        <!-- TDEngine -->
-        <!--<dependency>
-            <groupId>com.taosdata.flink</groupId>
-            <artifactId>flink-connector-tdengine</artifactId>
-            <version>2.1.4</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.flink</groupId>
-                    <artifactId>flink-java</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.flink</groupId>
-                    <artifactId>flink-runtime</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.flink</groupId>
-                    <artifactId>flink-streaming-java</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.flink</groupId>
-                    <artifactId>flink-clients</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.flink</groupId>
-                    <artifactId>flink-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>-->
 
         <!-- PROMETHEUS -->
         <dependency>
