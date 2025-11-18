@@ -6,8 +6,8 @@ import iot.sensor.query.model.SensorGroupQueryResponse;
 import iot.sensor.query.model.SensorGroupQueryResult;
 import iot.sensor.query.model.SensorQueryResponse;
 import iot.sensor.query.model.SensorQueryResult;
-import iot.sensor.query.util.DateParamValidator;
-import iot.sensor.query.util.IdentifierParamValidator;
+import iot.sensor.query.utils.DateParamValidator;
+import iot.sensor.query.utils.IdentifierParamValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

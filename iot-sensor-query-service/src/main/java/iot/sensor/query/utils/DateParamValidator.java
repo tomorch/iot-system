@@ -1,4 +1,4 @@
-package iot.sensor.query.util;
+package iot.sensor.query.utils;
 
 import java.text.SimpleDateFormat;
 

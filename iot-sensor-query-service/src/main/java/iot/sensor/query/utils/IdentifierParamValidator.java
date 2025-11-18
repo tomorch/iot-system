@@ -1,4 +1,4 @@
-package iot.sensor.query.util;
+package iot.sensor.query.utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

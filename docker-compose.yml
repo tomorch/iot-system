@@ -20,7 +20,6 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_NUM_PARTITIONS: 3
 
-
   init-kafka:
     image: apache/kafka:3.9.1
     container_name: "init-kafka"

@@ -15,10 +15,13 @@ public class KafkaProducerService {
     private static final Logger logger = LoggerFactory.getLogger(KafkaProducerService.class);
 
     @Autowired
+    private KafkaProducerConfig kafkaProducerConfig;
+
+    @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
-    public void publishReading(SensorReading reading, String topic) {
-        sendToTopic(topic, reading);
+    public void publishReading(SensorReading reading) {
+        sendToTopic(kafkaProducerConfig.getTopic(), reading);
     }
 
     private void sendToTopic(String topic, SensorReading reading) {
