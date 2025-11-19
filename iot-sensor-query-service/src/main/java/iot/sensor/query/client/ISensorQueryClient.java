@@ -1,7 +1,7 @@
 package iot.sensor.query.client;
 
-import iot.sensor.query.model.SensorGroupQueryResult;
-import iot.sensor.query.model.SensorQueryResult;
+import iot.sensor.query.response.SensorGroupQueryResult;
+import iot.sensor.query.response.SensorQueryResult;
 
 public interface ISensorQueryClient {
     SensorQueryResult executeSensorQuery(String sensorId, String start, String end);

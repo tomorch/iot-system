@@ -2,6 +2,7 @@ package iot.sensor.query.client.prometheus;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import iot.sensor.query.client.prometheus.response.PrometheusQueryResponse;
+import iot.sensor.query.net.IHttpClientProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
@@ -21,12 +21,10 @@ public class PrometheusHttpClient {
     @Autowired
     private PrometheusHttpClientConfig config;
 
-    private final HttpClient httpClient = getHttpClient();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private IHttpClientProvider httpClientProvider;
 
-    protected HttpClient getHttpClient() {
-        return HttpClient.newHttpClient();
-    }
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public PrometheusQueryResponse sendQuery(String path, String query) {
         try {
@@ -38,7 +36,7 @@ public class PrometheusHttpClient {
                     .POST(HttpRequest.BodyPublishers.ofString(query))
                     .build();
 
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = httpClientProvider.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() == 200) {
                 log.debug("prometheus query response: {}", response.body());
                 return objectMapper.readValue(response.body(), PrometheusQueryResponse.class);

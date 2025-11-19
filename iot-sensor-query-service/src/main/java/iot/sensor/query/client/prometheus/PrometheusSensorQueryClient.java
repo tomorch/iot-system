@@ -2,8 +2,8 @@ package iot.sensor.query.client.prometheus;
 
 import iot.sensor.query.client.ISensorQueryClient;
 import iot.sensor.query.client.prometheus.response.PrometheusQueryResponse;
-import iot.sensor.query.model.SensorGroupQueryResult;
-import iot.sensor.query.model.SensorQueryResult;
+import iot.sensor.query.response.SensorGroupQueryResult;
+import iot.sensor.query.response.SensorQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +28,7 @@ public class PrometheusSensorQueryClient implements ISensorQueryClient {
         PrometheusQueryResponse response = httpClient.sendQuery(QUERY_PATH, query);
 
         if(response == null || !response.status().equals("success") ) {
-            throw new RuntimeException("failed to query prometheus");
+            return null;
         } else {
             return responseTransformer.transformToSensorQueryResult(sensorId, response);
         }
@@ -44,7 +44,7 @@ public class PrometheusSensorQueryClient implements ISensorQueryClient {
         PrometheusQueryResponse response = httpClient.sendQuery(QUERY_PATH, query);
 
         if(response == null || !response.status().equals("success") ) {
-            throw new RuntimeException("failed to query prometheus");
+            return null;
         } else {
             return responseTransformer.transformToSensorGroupQueryResult(groupId, response);
         }

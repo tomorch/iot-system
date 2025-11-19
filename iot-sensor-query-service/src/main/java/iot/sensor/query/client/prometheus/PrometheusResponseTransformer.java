@@ -2,10 +2,10 @@ package iot.sensor.query.client.prometheus;
 
 import iot.sensor.query.client.prometheus.response.PrometheusQueryResponse;
 import iot.sensor.query.client.prometheus.response.PrometheusResult;
-import iot.sensor.query.model.SensorAggregatedReadingResult;
-import iot.sensor.query.model.SensorGroupQueryResult;
-import iot.sensor.query.model.SensorInfo;
-import iot.sensor.query.model.SensorQueryResult;
+import iot.sensor.query.response.SensorAggregatedReadingResult;
+import iot.sensor.query.response.SensorGroupQueryResult;
+import iot.sensor.query.response.SensorInfo;
+import iot.sensor.query.response.SensorQueryResult;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

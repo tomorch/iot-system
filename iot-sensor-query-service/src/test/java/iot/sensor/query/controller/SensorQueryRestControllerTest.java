@@ -2,9 +2,10 @@ package iot.sensor.query.controller;
 
 import iot.sensor.query.IoTSensorQueryApplication;
 import iot.sensor.query.client.ISensorQueryClient;
-import iot.sensor.query.model.SensorAggregatedReadingResult;
-import iot.sensor.query.model.SensorInfo;
-import iot.sensor.query.model.SensorQueryResult;
+import iot.sensor.query.response.SensorAggregatedReadingResult;
+import iot.sensor.query.response.SensorGroupQueryResult;
+import iot.sensor.query.response.SensorInfo;
+import iot.sensor.query.response.SensorQueryResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -53,6 +54,7 @@ public class SensorQueryRestControllerTest {
             .queryParam("end", "2025-11-18T12:00:00.000Z"))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.status.success", is(true)))
             .andExpect(jsonPath("$.queryResult.sensorInfo.id", is("hm1")))
             .andExpect(jsonPath("$.queryResult.sensorInfo.sensorType", is("HEART_RATE_MONITOR")))
             .andExpect(jsonPath("$.queryResult.sensorInfo.groupId", is("testgroup")))
@@ -77,9 +79,9 @@ public class SensorQueryRestControllerTest {
 
         Mockito.when(
             sensorQueryClient.executeSensorQuery(
-                    "hm1",
-                    "2025-11-18T00:00:00.000Z",
-                    "2025-11-18T12:00:00.000Z"
+                "hm1",
+                "2025-11-18T00:00:00.000Z",
+                "2025-11-18T12:00:00.000Z"
             )
         ).thenReturn(result);
 
@@ -88,6 +90,7 @@ public class SensorQueryRestControllerTest {
             .queryParam("end", "2025-11-18T12:00:00.000Z"))
             .andExpect(status().isOk())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.status.success", is(true)))
             .andExpect(jsonPath("$.queryResult.sensorInfo.id", is("hm1")))
             .andExpect(jsonPath("$.queryResult.aggregated.mean", is(0.0)))
             .andExpect(jsonPath("$.queryResult.aggregated.min", is(0.0)))
@@ -102,11 +105,27 @@ public class SensorQueryRestControllerTest {
     }
 
     @Test
+    public void testInvalidSensorIdParamSensorQuery() throws Exception {
+        mvc.perform(get("/api/v1/sensor/hm*1")
+            .queryParam("start","2025-11-18T00:00:00.000Z")
+            .queryParam("end", "2025-11-18T12:00:00.000Z"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.status.success", is(false)))
+            .andExpect(jsonPath("$.status.reason", is("sensorId is invalid - must contain no special characters")));
+
+        Mockito.verifyNoInteractions(sensorQueryClient);
+    }
+
+    @Test
     public void testInvalidStartParamSensorQuery() throws Exception {
         mvc.perform(get("/api/v1/sensor/hm1")
             .queryParam("start","18-11-2025T00:00:00.000Z")
             .queryParam("end", "2025-11-18T12:00:00.000Z"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.status.success", is(false)))
+            .andExpect(jsonPath("$.status.reason", is("start date is invalid - must conform to ISO 8601")));
 
         Mockito.verifyNoInteractions(sensorQueryClient);
     }
@@ -116,7 +135,117 @@ public class SensorQueryRestControllerTest {
         mvc.perform(get("/api/v1/sensor/hm1")
             .queryParam("start","2025-11-18T00:00:00.000Z")
             .queryParam("end", "18-11-2025T12:00:00.000Z"))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.status.success", is(false)))
+            .andExpect(jsonPath("$.status.reason", is("end date is invalid - must conform to ISO 8601")));
+
+        Mockito.verifyNoInteractions(sensorQueryClient);
+    }
+
+    @Test
+    public void testValidSensorGroupQuery() throws Exception {
+        SensorGroupQueryResult result = new SensorGroupQueryResult(
+            "testgroup",
+            new SensorAggregatedReadingResult(140.0, 145.5, 90.0, 160.0, 10)
+        );
+
+        Mockito.when(
+            sensorQueryClient.executeSensorGroupQuery(
+                "testgroup",
+                "2025-11-18T00:00:00.000Z",
+                "2025-11-18T12:00:00.000Z"
+            )
+        ).thenReturn(result);
+
+        mvc.perform(get("/api/v1/sensor/group/testgroup")
+            .queryParam("start","2025-11-18T00:00:00.000Z")
+            .queryParam("end", "2025-11-18T12:00:00.000Z"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.status.success", is(true)))
+            .andExpect(jsonPath("$.queryResult.groupId", is("testgroup")))
+            .andExpect(jsonPath("$.queryResult.aggregated.mean", is(140.0)))
+            .andExpect(jsonPath("$.queryResult.aggregated.min", is(90.0)))
+            .andExpect(jsonPath("$.queryResult.aggregated.max", is(160.0)))
+            .andExpect(jsonPath("$.queryResult.aggregated.median", is(145.5)))
+            .andExpect(jsonPath("$.queryResult.aggregated.count", is(10)));
+
+        Mockito.verify(sensorQueryClient, Mockito.atLeastOnce()).executeSensorGroupQuery(
+                "testgroup",
+                "2025-11-18T00:00:00.000Z",
+                "2025-11-18T12:00:00.000Z");
+    }
+
+    @Test
+    public void testEmptySensorGroupQuery() throws Exception {
+        SensorGroupQueryResult result = new SensorGroupQueryResult(
+            "testgroup",
+            new SensorAggregatedReadingResult(0, 0, 0, 0, 0)
+        );
+
+        Mockito.when(
+            sensorQueryClient.executeSensorGroupQuery(
+                "testgroup",
+                "2025-11-18T00:00:00.000Z",
+                "2025-11-18T12:00:00.000Z"
+            )
+        ).thenReturn(result);
+
+        mvc.perform(get("/api/v1/sensor/group/testgroup")
+            .queryParam("start","2025-11-18T00:00:00.000Z")
+            .queryParam("end", "2025-11-18T12:00:00.000Z"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.status.success", is(true)))
+            .andExpect(jsonPath("$.queryResult.groupId", is("testgroup")))
+            .andExpect(jsonPath("$.queryResult.aggregated.mean", is(0.0)))
+            .andExpect(jsonPath("$.queryResult.aggregated.min", is(0.0)))
+            .andExpect(jsonPath("$.queryResult.aggregated.max", is(0.0)))
+            .andExpect(jsonPath("$.queryResult.aggregated.median", is(0.0)))
+            .andExpect(jsonPath("$.queryResult.aggregated.count", is(0)));
+
+        Mockito.verify(sensorQueryClient, Mockito.atLeastOnce()).executeSensorGroupQuery(
+            "testgroup",
+            "2025-11-18T00:00:00.000Z",
+            "2025-11-18T12:00:00.000Z");
+    }
+
+    @Test
+    public void testInvalidGroupIdParamSensorGroupQuery() throws Exception {
+        mvc.perform(get("/api/v1/sensor/group/test*group")
+            .queryParam("start","2025-11-18T00:00:00.000Z")
+            .queryParam("end", "2025-11-18T12:00:00.000Z"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.status.success", is(false)))
+            .andExpect(jsonPath("$.status.reason", is("groupId is invalid - must contain no special characters")));
+
+        Mockito.verifyNoInteractions(sensorQueryClient);
+    }
+
+    @Test
+    public void testInvalidStartParamSensorGroupQuery() throws Exception {
+        mvc.perform(get("/api/v1/sensor/group/testgroup")
+            .queryParam("start","18-11-2025T00:00:00.000Z")
+            .queryParam("end", "2025-11-18T12:00:00.000Z"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.status.success", is(false)))
+            .andExpect(jsonPath("$.status.reason", is("start date is invalid - must conform to ISO 8601")));
+
+        Mockito.verifyNoInteractions(sensorQueryClient);
+    }
+
+    @Test
+    public void testInvalidEndParamSensorGroupQuery() throws Exception {
+        mvc.perform(get("/api/v1/sensor/group/testgroup")
+                        .queryParam("start","2025-11-18T00:00:00.000Z")
+                        .queryParam("end", "18-11-2025T12:00:00.000Z"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.status.success", is(false)))
+                .andExpect(jsonPath("$.status.reason", is("end date is invalid - must conform to ISO 8601")));
 
         Mockito.verifyNoInteractions(sensorQueryClient);
     }
