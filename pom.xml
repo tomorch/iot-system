@@ -21,6 +21,7 @@
         <spring-boot.version>3.5.7</spring-boot.version>
         <kafka.version>3.3.10</kafka.version>
         <jackson.version>2.19.2</jackson.version>
+        <cucumber.version>7.31.0</cucumber.version>
     </properties>
 
     <modules>
@@ -28,6 +29,7 @@
         <module>iot-sensor-simulator</module>
         <module>iot-sensor-reading-collector</module>
         <module>iot-sensor-query-service</module>
+        <module>iot-system-integration-tests</module>
     </modules>
 
 </project>
