@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     webEnvironment = SpringBootTest.WebEnvironment.MOCK,
     classes = IoTSensorQueryApplication.class
 )
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 public class SensorQueryRestControllerTest {
     @Autowired
     private MockMvc mvc;
