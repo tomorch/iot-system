@@ -60,9 +60,13 @@ public class PrometheusResponseTransformer {
 
         double mean = total / count;
         double median = count % 2 == 0 ?
-                (values[(int)count/2 - 1] + values[(int)count/2]) / 2 :
-                values[(int)count/2];
+                (values[count/2 - 1] + values[count/2]) / 2 :
+                values[count/2];
 
-        return new SensorAggregatedReadingResult(mean, median, min, max, count);
+        return new SensorAggregatedReadingResult(roundDoubleTo2DecimalPlaces(mean), roundDoubleTo2DecimalPlaces(median), min, max, count);
+    }
+
+    private double roundDoubleTo2DecimalPlaces(double input) {
+        return Math.round(input * 100.0) / 100.0;
     }
 }

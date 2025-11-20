@@ -30,9 +30,9 @@ public class PrometheusValueDeserializer extends StdDeserializer<PrometheusValue
     public PrometheusValue deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         JsonNode node = jsonParser.getCodec().readTree(jsonParser);
         if (node.isArray() && node.size() == 2) {
-            String timestamp = node.get(0).asText();
+            Double timestamp = node.get(0).asDouble();
             String value = node.get(1).asText();
-            return new PrometheusValue(Long.parseLong(timestamp), value);
+            return new PrometheusValue(timestamp.longValue(), value);
         } else {
             throw new RuntimeException("Invalid PrometheusValue format");
         }

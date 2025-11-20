@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PrometheusSensorQueryClient implements ISensorQueryClient {
-    private static final int DEFAULT_STEP_SECONDS = 15;
+    private static final int DEFAULT_STEP_SECONDS = 1;
     private static final String QUERY_PATH = "/query_range";
 
     @Autowired
