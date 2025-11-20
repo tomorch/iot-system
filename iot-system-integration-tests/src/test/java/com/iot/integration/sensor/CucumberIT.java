@@ -13,5 +13,5 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @SelectPackages("com.iot.integration.sensor")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.iot.integration.sensor")
-public class RunCucumberTest {
+public class CucumberIT {
 }

@@ -6,7 +6,7 @@
 
     <groupId>tomorch</groupId>
     <artifactId>iot-sensor-query-service</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>IoT Sensor Query Service</name>
 
     <parent>
