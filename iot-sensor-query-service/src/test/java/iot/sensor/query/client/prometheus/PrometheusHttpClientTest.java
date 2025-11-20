@@ -5,7 +5,6 @@ import iot.sensor.query.client.prometheus.response.PrometheusResult;
 import iot.sensor.query.net.IHttpClientProvider;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -16,7 +15,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class PrometheusHttpClientTest {
@@ -33,16 +32,16 @@ public class PrometheusHttpClientTest {
     public void testValidRequest() throws IOException, InterruptedException {
         String baseUrl = "http://localhost:8080";
 
-        Mockito.when(httpClientConfig.getBaseUrl()).thenReturn(baseUrl);
+        when(httpClientConfig.getBaseUrl()).thenReturn(baseUrl);
 
-        HttpResponse<String> response = Mockito.mock(HttpResponse.class);
-        Mockito.when(response.statusCode()).thenReturn(200);
-        Mockito.when(response.body()).thenReturn("{\"status\":\"success\",\"data\":{\"resultType\":\"matrix\",\"result\":[{\"metric\":{\"__name__\":\"sensor_value\",\"group_id\":\"fitness\",\"reading_id\":\"0628a2c9-b9cd-4ca5-a6fe-61814a03b048\",\"sensor_id\":\"hm1\",\"sensor_type\":\"HEART_RATE_MONITOR\"},\"values\":[[1763545665,\"140.69\"],[1763545680,\"135.09\"],[1763545695,\"145.70\"]]}]}}");
+        HttpResponse<String> response = mock(HttpResponse.class);
+        when(response.statusCode()).thenReturn(200);
+        when(response.body()).thenReturn("{\"status\":\"success\",\"data\":{\"resultType\":\"matrix\",\"result\":[{\"metric\":{\"__name__\":\"sensor_value\",\"group_id\":\"fitness\",\"reading_id\":\"0628a2c9-b9cd-4ca5-a6fe-61814a03b048\",\"sensor_id\":\"hm1\",\"sensor_type\":\"HEART_RATE_MONITOR\"},\"values\":[[1763545665,\"140.69\"],[1763545680,\"135.09\"],[1763545695,\"145.70\"]]}]}}");
 
-        HttpClient httpClient = Mockito.mock(HttpClient.class);
-        Mockito.when(httpClient.send(Mockito.any(HttpRequest.class), Mockito.any(HttpResponse.BodyHandler.class))).thenReturn(response);
+        HttpClient httpClient = mock(HttpClient.class);
+        when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenReturn(response);
 
-        Mockito.when(httpClientProvider.getHttpClient()).thenReturn(httpClient);
+        when(httpClientProvider.getHttpClient()).thenReturn(httpClient);
 
         PrometheusQueryResponse queryResponse = prometheusHttpClient.sendQuery("somepath", "somequery");
 
@@ -68,22 +67,22 @@ public class PrometheusHttpClientTest {
         assertEquals(1763545695, first.values()[2].timestamp());
         assertEquals("145.70", first.values()[2].value());
 
-        Mockito.verify(httpClient, times(1)).send(Mockito.any(HttpRequest.class), Mockito.any(HttpResponse.BodyHandler.class));
+        verify(httpClient, times(1)).send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class));
     }
 
     @Test
     public void testNon200ResponseCode() throws IOException, InterruptedException {
         String baseUrl = "http://localhost:8080";
 
-        Mockito.when(httpClientConfig.getBaseUrl()).thenReturn(baseUrl);
+        when(httpClientConfig.getBaseUrl()).thenReturn(baseUrl);
 
-        HttpResponse<String> response = Mockito.mock(HttpResponse.class);
-        Mockito.when(response.statusCode()).thenReturn(500);
+        HttpResponse<String> response = mock(HttpResponse.class);
+        when(response.statusCode()).thenReturn(500);
 
-        HttpClient httpClient = Mockito.mock(HttpClient.class);
-        Mockito.when(httpClient.send(Mockito.any(HttpRequest.class), Mockito.any(HttpResponse.BodyHandler.class))).thenReturn(response);
+        HttpClient httpClient = mock(HttpClient.class);
+        when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenReturn(response);
 
-        Mockito.when(httpClientProvider.getHttpClient()).thenReturn(httpClient);
+        when(httpClientProvider.getHttpClient()).thenReturn(httpClient);
 
         PrometheusQueryResponse queryResponse = prometheusHttpClient.sendQuery("somepath", "somequery");
 
@@ -94,12 +93,12 @@ public class PrometheusHttpClientTest {
     public void testIOExceptionThrown() throws IOException, InterruptedException {
         String baseUrl = "http://localhost:8080";
 
-        Mockito.when(httpClientConfig.getBaseUrl()).thenReturn(baseUrl);
+        when(httpClientConfig.getBaseUrl()).thenReturn(baseUrl);
 
-        HttpClient httpClient = Mockito.mock(HttpClient.class);
-        Mockito.when(httpClient.send(Mockito.any(HttpRequest.class), Mockito.any(HttpResponse.BodyHandler.class))).thenThrow(new IOException());
+        HttpClient httpClient = mock(HttpClient.class);
+        when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenThrow(new IOException());
 
-        Mockito.when(httpClientProvider.getHttpClient()).thenReturn(httpClient);
+        when(httpClientProvider.getHttpClient()).thenReturn(httpClient);
 
         PrometheusQueryResponse queryResponse = prometheusHttpClient.sendQuery("somepath", "somequery");
 
@@ -110,12 +109,12 @@ public class PrometheusHttpClientTest {
     public void testInterruptedExceptionThrown() throws IOException, InterruptedException {
         String baseUrl = "http://localhost:8080";
 
-        Mockito.when(httpClientConfig.getBaseUrl()).thenReturn(baseUrl);
+        when(httpClientConfig.getBaseUrl()).thenReturn(baseUrl);
 
-        HttpClient httpClient = Mockito.mock(HttpClient.class);
-        Mockito.when(httpClient.send(Mockito.any(HttpRequest.class), Mockito.any(HttpResponse.BodyHandler.class))).thenThrow(new InterruptedException());
+        HttpClient httpClient = mock(HttpClient.class);
+        when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenThrow(new InterruptedException());
 
-        Mockito.when(httpClientProvider.getHttpClient()).thenReturn(httpClient);
+        when(httpClientProvider.getHttpClient()).thenReturn(httpClient);
 
         PrometheusQueryResponse queryResponse = prometheusHttpClient.sendQuery("somepath", "somequery");
 

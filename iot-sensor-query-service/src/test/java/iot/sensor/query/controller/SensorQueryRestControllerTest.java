@@ -8,7 +8,6 @@ import iot.sensor.query.response.SensorInfo;
 import iot.sensor.query.response.SensorQueryResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -41,7 +41,7 @@ public class SensorQueryRestControllerTest {
             new SensorAggregatedReadingResult(140.0, 145.5, 90.0, 160.0, 10)
         );
 
-        Mockito.when(
+        when(
             sensorQueryClient.executeSensorQuery(
                 "hm1",
                 "2025-11-18T00:00:00.000Z",
@@ -64,7 +64,7 @@ public class SensorQueryRestControllerTest {
             .andExpect(jsonPath("$.queryResult.aggregated.median", is(145.5)))
             .andExpect(jsonPath("$.queryResult.aggregated.count", is(10)));
         
-        Mockito.verify(sensorQueryClient, Mockito.atLeastOnce()).executeSensorQuery(
+        verify(sensorQueryClient, atLeastOnce()).executeSensorQuery(
             "hm1",
             "2025-11-18T00:00:00.000Z",
             "2025-11-18T12:00:00.000Z");
@@ -77,7 +77,7 @@ public class SensorQueryRestControllerTest {
             new SensorAggregatedReadingResult(0, 0, 0, 0, 0)
         );
 
-        Mockito.when(
+        when(
             sensorQueryClient.executeSensorQuery(
                 "hm1",
                 "2025-11-18T00:00:00.000Z",
@@ -98,7 +98,7 @@ public class SensorQueryRestControllerTest {
             .andExpect(jsonPath("$.queryResult.aggregated.median", is(0.0)))
             .andExpect(jsonPath("$.queryResult.aggregated.count", is(0)));
 
-        Mockito.verify(sensorQueryClient, Mockito.atLeastOnce()).executeSensorQuery(
+        verify(sensorQueryClient, atLeastOnce()).executeSensorQuery(
             "hm1",
             "2025-11-18T00:00:00.000Z",
             "2025-11-18T12:00:00.000Z");
@@ -114,7 +114,7 @@ public class SensorQueryRestControllerTest {
             .andExpect(jsonPath("$.status.success", is(false)))
             .andExpect(jsonPath("$.status.reason", is("sensorId is invalid - must contain no special characters")));
 
-        Mockito.verifyNoInteractions(sensorQueryClient);
+        verifyNoInteractions(sensorQueryClient);
     }
 
     @Test
@@ -127,7 +127,7 @@ public class SensorQueryRestControllerTest {
             .andExpect(jsonPath("$.status.success", is(false)))
             .andExpect(jsonPath("$.status.reason", is("start date is invalid - must conform to ISO 8601")));
 
-        Mockito.verifyNoInteractions(sensorQueryClient);
+        verifyNoInteractions(sensorQueryClient);
     }
 
     @Test
@@ -140,7 +140,7 @@ public class SensorQueryRestControllerTest {
             .andExpect(jsonPath("$.status.success", is(false)))
             .andExpect(jsonPath("$.status.reason", is("end date is invalid - must conform to ISO 8601")));
 
-        Mockito.verifyNoInteractions(sensorQueryClient);
+        verifyNoInteractions(sensorQueryClient);
     }
 
     @Test
@@ -150,7 +150,7 @@ public class SensorQueryRestControllerTest {
             new SensorAggregatedReadingResult(140.0, 145.5, 90.0, 160.0, 10)
         );
 
-        Mockito.when(
+        when(
             sensorQueryClient.executeSensorGroupQuery(
                 "testgroup",
                 "2025-11-18T00:00:00.000Z",
@@ -171,7 +171,7 @@ public class SensorQueryRestControllerTest {
             .andExpect(jsonPath("$.queryResult.aggregated.median", is(145.5)))
             .andExpect(jsonPath("$.queryResult.aggregated.count", is(10)));
 
-        Mockito.verify(sensorQueryClient, Mockito.atLeastOnce()).executeSensorGroupQuery(
+        verify(sensorQueryClient, atLeastOnce()).executeSensorGroupQuery(
                 "testgroup",
                 "2025-11-18T00:00:00.000Z",
                 "2025-11-18T12:00:00.000Z");
@@ -184,7 +184,7 @@ public class SensorQueryRestControllerTest {
             new SensorAggregatedReadingResult(0, 0, 0, 0, 0)
         );
 
-        Mockito.when(
+        when(
             sensorQueryClient.executeSensorGroupQuery(
                 "testgroup",
                 "2025-11-18T00:00:00.000Z",
@@ -205,7 +205,7 @@ public class SensorQueryRestControllerTest {
             .andExpect(jsonPath("$.queryResult.aggregated.median", is(0.0)))
             .andExpect(jsonPath("$.queryResult.aggregated.count", is(0)));
 
-        Mockito.verify(sensorQueryClient, Mockito.atLeastOnce()).executeSensorGroupQuery(
+        verify(sensorQueryClient, atLeastOnce()).executeSensorGroupQuery(
             "testgroup",
             "2025-11-18T00:00:00.000Z",
             "2025-11-18T12:00:00.000Z");
@@ -221,7 +221,7 @@ public class SensorQueryRestControllerTest {
             .andExpect(jsonPath("$.status.success", is(false)))
             .andExpect(jsonPath("$.status.reason", is("groupId is invalid - must contain no special characters")));
 
-        Mockito.verifyNoInteractions(sensorQueryClient);
+        verifyNoInteractions(sensorQueryClient);
     }
 
     @Test
@@ -234,7 +234,7 @@ public class SensorQueryRestControllerTest {
             .andExpect(jsonPath("$.status.success", is(false)))
             .andExpect(jsonPath("$.status.reason", is("start date is invalid - must conform to ISO 8601")));
 
-        Mockito.verifyNoInteractions(sensorQueryClient);
+        verifyNoInteractions(sensorQueryClient);
     }
 
     @Test
@@ -247,6 +247,6 @@ public class SensorQueryRestControllerTest {
                 .andExpect(jsonPath("$.status.success", is(false)))
                 .andExpect(jsonPath("$.status.reason", is("end date is invalid - must conform to ISO 8601")));
 
-        Mockito.verifyNoInteractions(sensorQueryClient);
+        verifyNoInteractions(sensorQueryClient);
     }
 }
