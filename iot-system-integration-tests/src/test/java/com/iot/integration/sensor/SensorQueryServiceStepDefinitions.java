@@ -1,10 +1,8 @@
 package com.iot.integration.sensor;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iot.model.SensorReading;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.xerial.snappy.Snappy;
 import prometheus.Remote;
 import prometheus.Types;
@@ -102,6 +100,66 @@ public class SensorQueryServiceStepDefinitions {
         assertTrue(body.contains("\"groupId\":\"" + first.groupId() + "\""));
         assertTrue(body.contains("\"id\":\"" + first.sensorId() + "\""));
         assertTrue(body.contains("\"sensorType\":\"" + first.sensorType() + "\""));
+
+        for(SensorReading sensorReading : sensorReadings) {
+            double value = sensorReading.value();
+
+            if(value < min) min = value;
+            if(value > max) max = value;
+
+            total += value;
+
+            values[index++] = value;
+        }
+
+        double mean = total / count;
+
+        double median = count % 2 == 0 ?
+                (values[count/2 - 1] + values[count/2]) / 2 :
+                values[count/2];
+
+        assertTrue(body.contains("\"mean\":" + roundDoubleTo2DecimalPlaces(mean)));
+        assertTrue(body.contains("\"median\":" + roundDoubleTo2DecimalPlaces(median)));
+        assertTrue(body.contains("\"min\":" + min));
+        assertTrue(body.contains("\"max\":" + max));
+        assertTrue(body.contains("\"count\":" + count));
+    }
+
+    @Then("Sending a sensor group query request should return an appropriate response")
+    public void sendSensorGroupQueryRequest() throws IOException, URISyntaxException, InterruptedException {
+        Properties properties = PropertyLoader.loadProperties(TEST_PROPERTIES_FILENAME);
+
+        HttpClient httpClient = HttpClient.newHttpClient();
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
+        SensorReading first = sensorReadings.get(0);
+        SensorReading last = sensorReadings.get(sensorReadings.size() - 1);
+
+        String start = dateFormat.format(Date.from(Instant.ofEpochMilli(first.timestamp()-10))); // 10ms before
+        String end = dateFormat.format(Date.from(Instant.ofEpochMilli(last.timestamp()+1000))); // 1s after
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(String.format(
+                        properties.getProperty(IOT_SENSOR_QUERY_SERVICE_BASE_URL_PROP) +
+                                properties.getProperty(IOT_SENSOR_QUERY_SERVICE_SENSOR_GROUP_PATH) +
+                                "%s?start=%s&end=%s", first.groupId(), start, end)))
+                .GET()
+                .header("Authorization", getBasicAuthenticationHeader("user", "password"))
+                .build();
+
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        String body = response.body();
+
+        int count = sensorReadings.size();
+        Double[] values = new Double[count];
+        int index = 0;
+        double min = Double.MAX_VALUE;
+        double max = Double.MIN_VALUE;
+        double total = 0;
+
+        assertTrue(body.contains("\"groupId\":\"" + first.groupId() + "\""));
 
         for(SensorReading sensorReading : sensorReadings) {
             double value = sensorReading.value();
