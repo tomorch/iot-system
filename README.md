@@ -40,6 +40,13 @@ Or to query a sensor group (groupId is also alphanumeric):
 
 http://localhost:8080/api/v1/sensor/group/medical?start=2025-11-21T00:00:00.000Z&end=2025-11-21T23:00:00.000Z
 
+The various components can be configured using their respective configuration files:
+
+- iot-sensor-query-service/src/main/resources/application.yml
+- iot-sensor-reading-collector/src/main/resources/application.properties
+- iot-sensor-simulator/src/main/resources/application.yml
+- iot-system-integration-tests/src/test/resources/test.properties
+
 ---
 
 ## Architecture
