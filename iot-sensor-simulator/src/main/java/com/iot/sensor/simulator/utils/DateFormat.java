@@ -1,4 +1,4 @@
-package com.iot.simulator.utils;
+package com.iot.sensor.simulator.utils;
 
 import java.time.format.DateTimeFormatter;
 

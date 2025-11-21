@@ -1,4 +1,4 @@
-package com.iot.simulator.service;
+package com.iot.sensor.simulator.service;
 
 import com.iot.sensor.model.SensorReading;
 import org.slf4j.Logger;
@@ -36,5 +36,4 @@ public class KafkaProducerService {
             logger.error("Failed to publish reading to topic {}: {}", topic, e.getMessage(), e);
         }
     }
-
 }

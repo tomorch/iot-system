@@ -1,4 +1,4 @@
-package com.iot.simulator.generator;
+package com.iot.sensor.simulator.generator;
 
 import com.iot.sensor.model.SensorReading;
 import org.springframework.beans.factory.annotation.Autowired;

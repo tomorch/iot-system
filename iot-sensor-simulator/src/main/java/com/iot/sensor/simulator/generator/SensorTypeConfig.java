@@ -1,4 +1,4 @@
-package com.iot.simulator.generator;
+package com.iot.sensor.simulator.generator;
 
 import java.util.List;
 
