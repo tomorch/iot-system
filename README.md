@@ -78,7 +78,9 @@ The IoT Sensor Query Service (as a stateless application) could be deployed cost
 
 The system can be configured to stream and consume sensor readings from one or more Kafka topics. It may be necessary as the system evolves to support additional IoT sensor types and devices that generate large numbers (millions) of readings per hour, in which case it may be necessary to create dedicated Kafka topics that can be configured independently.
 
-### Development Notes and Potential Improvements
+---
+
+## Development Notes and Future Improvements
 
 - Performance tests - the system is currently lacking performance tests that validate that the system can accommodate a specified rate of simulated sensor readings while maintaining acceptable throughput and latency.
 - Component tests - the system is currently lacking component tests that validate that each component produces the expected output(s) for the given input(s) without relying on real infrastructure (Prometheus in this case).
