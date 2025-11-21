@@ -26,6 +26,20 @@ specific timeframe.
 6. Start the IoT Sensor Simulator Application: **mvn -f ./iot-sensor-simulator/ spring-boot:run > simulator.log &**
 7. (Optional) Run the integration tests: **mvn failsafe:integration-test**
 
+At this stage the applications should be actively logging sensor readings being generated and streamed over the pipeline. 
+IoT Query Service should also be accessible at http://localhost:8080 using username "user" and password "password" (by default). 
+The sensor readings can be queried as follows:
+
+http://localhost:8080/api/v1/sensor/{sensorId}?start={start}&end={end}
+
+Where sensorId is an alphanumeric string and start and end are ISO 8601 formatted date strings. For example:
+
+http://localhost:8080/api/v1/sensor/hm3?start=2025-11-21T00:00:00.000Z&end=2025-11-21T23:00:00.000Z
+
+Or to query a sensor group (groupId is also alphanumeric):
+
+http://localhost:8080/api/v1/sensor/group/medical?start=2025-11-21T00:00:00.000Z&end=2025-11-21T23:00:00.000Z
+
 ---
 
 ## Architecture
@@ -59,9 +73,10 @@ The system can be configured to stream and consume sensor readings from one or m
 
 ### Development Notes and Potential Improvements
 
-- Performance tests - the system is currently lacking performance tests that validate that the system can accommodate a given rate of simulated sensor readings while maintaining acceptable throughput and latency.
+- Performance tests - the system is currently lacking performance tests that validate that the system can accommodate a specified rate of simulated sensor readings while maintaining acceptable throughput and latency.
 - Component tests - the system is currently lacking component tests that validate that each component produces the expected output(s) for the given input(s) without relying on real infrastructure (Prometheus in this case).
-- Unit and Integration tests - are not comprehensive in their current state. **Additionally, integration tests fail on first run and then pass for all runs thereafter.**
+- Unit and Integration tests - are not comprehensive in their current state. **Note: integration tests fail on first run and then pass for all runs thereafter.**
 - Prometheus Query Optimisation - IoT Sensor Query Service is currently requesting all samples from Prometheus within a given date/time range rather than utilising the full and far more efficiency querying functionality provided by Prometheus.
 - Message format - the system is currently transmitting sensor readings in JSON format rather than using Protobuf which would provide numerous benefits such as type-safety, faster (de)serialisation and support for backwards compatibility.
 - Build and deployment - the system could be fully built and deployed using Docker containers thereby eliminating the need for the user to have Java and Maven installed in order to operate the system.
+- Comments - the codebase is severely lacking comments in its current form.
