@@ -22,10 +22,10 @@ public class SensorSimulationScheduler {
 
     @Scheduled(fixedRate = 1000)
     public void publishSensorReadings() {
-        sensorReadingGenerator.generateReadings().forEach(sensorReading -> {
-            log.info("Publishing sensor reading {}", sensorReading);
+        sensorReadingGenerator.generateReadings().forEach(generatedReading -> {
+            log.info("Publishing sensor reading {}", generatedReading);
 
-            kafkaProducerService.publishReading(sensorReading);
+            kafkaProducerService.publishReading(generatedReading.topic(), generatedReading.sensorReading());
         });
     }
 }

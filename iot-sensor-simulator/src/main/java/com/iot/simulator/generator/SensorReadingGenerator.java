@@ -14,26 +14,29 @@ public class SensorReadingGenerator {
     @Autowired
     private SensorReadingGeneratorConfig sensorReadingGeneratorConfig;
 
-    public List<SensorReading> generateReadings() {
+    public List<SensorGeneratedReading> generateReadings() {
         final Random rand = new Random();
 
         return sensorReadingGeneratorConfig.getSensorTypeConfigs().stream()
             .flatMap(sensorConfig -> {
-                List<SensorReading> readings = new ArrayList<>();
+                List<SensorGeneratedReading> generatedReadings = new ArrayList<>();
                 for(int i = 0; i < sensorConfig.getNumSensors(); i++) {
                     double value = sensorConfig.getMinValue() + rand.nextDouble(sensorConfig.getMaxValue() - sensorConfig.getMinValue());
-                    readings.add(
-                        new SensorReading(
-                            UUID.randomUUID().toString(),
-                            sensorConfig.getSensorIdPrefix() + i,
-                            sensorConfig.getSensorType(),
-                            sensorConfig.getGroupIds().get(rand.nextInt(sensorConfig.getGroupIds().size())),
-                            Math.round(value * 100.0) / 100.0,
-                            System.currentTimeMillis()
+                    generatedReadings.add(
+                        new SensorGeneratedReading(
+                            new SensorReading(
+                                UUID.randomUUID().toString(),
+                                sensorConfig.getSensorIdPrefix() + i,
+                                sensorConfig.getSensorType(),
+                                sensorConfig.getGroupIds().get(rand.nextInt(sensorConfig.getGroupIds().size())),
+                                Math.round(value * 100.0) / 100.0,
+                                System.currentTimeMillis()
+                            ),
+                            sensorConfig.getTopic()
                         )
                     );
                 }
-                return readings.stream();
+                return generatedReadings.stream();
             }).toList();
     }
 }

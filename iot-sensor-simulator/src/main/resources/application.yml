@@ -1,6 +1,5 @@
 spring:
   kafka:
-    topic: "sensor-readings"
     bootstrap-servers: localhost:29092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
