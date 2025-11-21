@@ -132,7 +132,7 @@
                             <archive>
                                 <manifest>
                                     <mainClass>
-                                        com.iot.collector.IoTSensorReadingCollector
+                                        com.iot.sensor.collector.IoTSensorReadingCollector
                                     </mainClass>
                                 </manifest>
                             </archive>

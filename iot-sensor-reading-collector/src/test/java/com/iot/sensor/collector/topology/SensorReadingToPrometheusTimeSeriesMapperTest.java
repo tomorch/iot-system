@@ -1,4 +1,4 @@
-package com.iot.collector.topology;
+package com.iot.sensor.collector.topology;
 
 import com.iot.model.SensorReading;
 import org.apache.flink.connector.prometheus.sink.PrometheusTimeSeries;

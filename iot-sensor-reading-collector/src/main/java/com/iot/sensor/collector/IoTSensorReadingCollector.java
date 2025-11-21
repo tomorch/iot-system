@@ -1,20 +1,15 @@
-package com.iot.collector;
+package com.iot.sensor.collector;
 
-import com.iot.collector.topology.SensorReadingToPrometheusTimeSeriesMapper;
+import com.iot.sensor.collector.topology.SensorReadingToPrometheusTimeSeriesMapper;
 import com.iot.model.SensorReading;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.prometheus.sink.PrometheusSink;
-import org.apache.flink.connector.prometheus.sink.PrometheusTimeSeries;
 import org.apache.flink.formats.json.JsonDeserializationSchema;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
-import org.apache.flink.streaming.api.functions.ProcessFunction;
-import org.apache.flink.util.Collector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
