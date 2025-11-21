@@ -20,19 +20,19 @@ public class SensorReadingGenerator {
         return sensorReadingGeneratorConfig.getSensorTypeConfigs().stream()
             .flatMap(sensorConfig -> {
                 List<SensorGeneratedReading> generatedReadings = new ArrayList<>();
-                for(int i = 0; i < sensorConfig.getNumSensors(); i++) {
-                    double value = sensorConfig.getMinValue() + rand.nextDouble(sensorConfig.getMaxValue() - sensorConfig.getMinValue());
+                for(int i = 0; i < sensorConfig.numSensors(); i++) {
+                    double value = sensorConfig.minValue() + rand.nextDouble(sensorConfig.maxValue() - sensorConfig.minValue());
                     generatedReadings.add(
                         new SensorGeneratedReading(
                             new SensorReading(
                                 UUID.randomUUID().toString(),
-                                sensorConfig.getSensorIdPrefix() + i,
-                                sensorConfig.getSensorType(),
-                                sensorConfig.getGroupIds().get(rand.nextInt(sensorConfig.getGroupIds().size())),
+                                sensorConfig.sensorIdPrefix() + i,
+                                sensorConfig.sensorType(),
+                                sensorConfig.groupIds().get(rand.nextInt(sensorConfig.groupIds().size())),
                                 Math.round(value * 100.0) / 100.0,
                                 System.currentTimeMillis()
                             ),
-                            sensorConfig.getTopic()
+                            sensorConfig.topic()
                         )
                     );
                 }
