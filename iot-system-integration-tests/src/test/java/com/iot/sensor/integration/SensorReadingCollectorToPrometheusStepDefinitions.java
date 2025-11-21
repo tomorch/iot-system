@@ -1,4 +1,4 @@
-package com.iot.integration.sensor;
+package com.iot.sensor.integration;
 
 import com.iot.sensor.model.SensorReading;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
-import static com.iot.integration.sensor.Constants.*;
+import static com.iot.sensor.integration.Constants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

@@ -1,4 +1,4 @@
-package com.iot.integration.sensor;
+package com.iot.sensor.integration;
 
 public class Constants {
     public static final String TEST_PROPERTIES_FILENAME = "test.properties";

@@ -1,4 +1,4 @@
-package com.iot.integration.sensor;
+package com.iot.sensor.integration;
 
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -10,8 +10,8 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectPackages("com.iot.integration.sensor")
+@SelectPackages("com.iot.sensor.integration")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
-@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.iot.integration.sensor")
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.iot.sensor.integration")
 public class CucumberIT {
 }

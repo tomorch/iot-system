@@ -1,4 +1,4 @@
-package com.iot.integration.sensor;
+package com.iot.sensor.integration;
 
 import com.iot.sensor.model.SensorReading;
 import io.cucumber.java.en.Given;
@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 
-import static com.iot.integration.sensor.Constants.*;
+import static com.iot.sensor.integration.Constants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

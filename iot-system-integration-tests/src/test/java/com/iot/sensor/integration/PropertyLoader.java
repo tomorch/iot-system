@@ -1,4 +1,4 @@
-package com.iot.integration.sensor;
+package com.iot.sensor.integration;
 
 import java.io.IOException;
 import java.io.InputStream;
