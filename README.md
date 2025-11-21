@@ -64,4 +64,4 @@ The system can be configured to stream and consume sensor readings from one or m
 - Unit and Integration tests - are not comprehensive in their current state. **Additionally, integration tests fail on first run and then pass for all runs thereafter.**
 - Prometheus Query Optimisation - IoT Sensor Query Service is currently requesting all samples from Prometheus within a given date/time range rather than utilising the full and far more efficiency querying functionality provided by Prometheus.
 - Message format - the system is currently transmitting sensor readings in JSON format rather than using Protobuf which would provide numerous benefits such as type-safety, faster (de)serialisation and support for backwards compatibility.
-- Build and deployment - the system could be fully built and deployed using Docker containers thereby eliminating the user to have Java and Maven installed in order to operate the system.
+- Build and deployment - the system could be fully built and deployed using Docker containers thereby eliminating the need for the user to have Java and Maven installed in order to operate the system.
