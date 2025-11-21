@@ -5,6 +5,7 @@ import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingExcept
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -19,7 +20,9 @@ import java.net.http.HttpResponse;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 import static com.iot.integration.sensor.Constants.*;
@@ -29,10 +32,26 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SensorReadingCollectorToPrometheusStepDefinitions {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private SensorReading sensorReading;
+    private final List<SensorReading> sensorReadings = new ArrayList<>();
 
-    @Given("Sensor reading with readingId {string}, sensorId {string}, sensorType {string}, groupId {string} and value {double} published onto sensor reading topic")
-    public void publishSensorReading(String readingId, String sensorId, String sensorType, String groupId, double value) throws IOException {
+    @Given("a sensor reading with readingId {string}, sensorId {string}, sensorType {string}, groupId {string}, value {double} and current timestamp")
+    public void createSensorReading(String readingId, String sensorId, String sensorType, String groupId, double value) {
+        sensorReadings.add(new SensorReading(
+                readingId,
+                sensorId,
+                sensorType,
+                groupId,
+                value,
+                System.currentTimeMillis()
+        ));
+    }
+
+    @When("the reading is published onto the sensor reading topic")
+    public void publishSensorReading() throws IOException {
+        if(sensorReadings.isEmpty()) {
+            throw new RuntimeException("No sensor readings created - use \"Given a sensor reading...\" first");
+        }
+
         Properties properties = PropertyLoader.loadProperties(TEST_PROPERTIES_FILENAME);
 
         Properties kafkaProperties = new Properties();
@@ -40,19 +59,12 @@ public class SensorReadingCollectorToPrometheusStepDefinitions {
         kafkaProperties.put("key.serializer", StringSerializer.class.getName());
         kafkaProperties.put("value.serializer", StringSerializer.class.getName());
 
-        sensorReading = new SensorReading(
-            readingId,
-            sensorId,
-            sensorType,
-            groupId,
-            value,
-            System.currentTimeMillis()
-        );
+        SensorReading sensorReading = sensorReadings.get(0);
 
         try(Producer<String, String> producer = new KafkaProducer<>(kafkaProperties)) {
             String sensorReadingJsonString = objectMapper.writeValueAsString(sensorReading);
 
-            ProducerRecord<String, String> record = new ProducerRecord<>(properties.getProperty(KAFKA_TOPIC_PROP), sensorId, sensorReadingJsonString);
+            ProducerRecord<String, String> record = new ProducerRecord<>(properties.getProperty(KAFKA_TOPIC_PROP), sensorReading.sensorId(), sensorReadingJsonString);
 
             producer.send(record);
         } catch (JsonProcessingException e) {
@@ -60,13 +72,19 @@ public class SensorReadingCollectorToPrometheusStepDefinitions {
         }
     }
 
-    @Then("Querying Prometheus should return the corresponding sample")
+    @Then("querying Prometheus should return the corresponding sample")
     public void queryPrometheusSample() throws URISyntaxException, IOException, InterruptedException {
+        if(sensorReadings.isEmpty()) {
+            throw new RuntimeException("No sensor readings created - use \"Given a sensor reading...\" and \"When the reading is published...\" first");
+        }
+
         Properties properties = PropertyLoader.loadProperties(TEST_PROPERTIES_FILENAME);
 
         HttpClient httpClient = HttpClient.newHttpClient();
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
+        SensorReading sensorReading = sensorReadings.get(0);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI(properties.getProperty(PROMETHEUS_BASE_URL_PROP) + properties.getProperty(PROMETHEUS_QUERY_PATH_PROP)))

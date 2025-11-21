@@ -3,6 +3,7 @@ package com.iot.integration.sensor;
 import com.iot.model.SensorReading;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import org.xerial.snappy.Snappy;
 import prometheus.Remote;
 import prometheus.Types;
@@ -27,26 +28,37 @@ public class SensorQueryServiceStepDefinitions {
 
     private static final String SENSOR_VALUE_METRIC_NAME = "sensor_value";
 
-    private List<SensorReading> sensorReadings = new ArrayList<>();
+    private final List<SensorReading> sensorReadings = new ArrayList<>();
 
-    @Given("Sensor reading sample with readingId {string}, sensorId {string}, sensorType {string}, groupId {string} and value {double} written to Prometheus")
-    public void writeSensorReadingSample(String readingId, String sensorId, String sensorType, String groupId, double value) throws IOException, URISyntaxException, InterruptedException {
-        Properties properties = PropertyLoader.loadProperties(TEST_PROPERTIES_FILENAME);
-
-        HttpClient httpClient = HttpClient.newHttpClient();
-
-        SensorReading sensorReading = new SensorReading(
+    @Given("a reading with readingId {string}, sensorId {string}, sensorType {string}, groupId {string}, value {double} and current timestamp")
+    public void createSensorReading(String readingId, String sensorId, String sensorType, String groupId, double value) {
+        sensorReadings.add(new SensorReading(
                 readingId,
                 sensorId,
                 sensorType,
                 groupId,
                 value,
                 System.currentTimeMillis()
-        );
+        ));
+    }
 
-        sensorReadings.add(sensorReading);
+    @When("corresponding samples are written to Prometheus")
+    public void writeSensorReadingSamples() throws IOException, URISyntaxException, InterruptedException {
+        if(sensorReadings.isEmpty()) {
+            throw new RuntimeException("No sensor readings created - use \"Given a sensor reading...\" first");
+        }
 
-        Remote.WriteRequest writeRequest = Remote.WriteRequest.newBuilder().addTimeseries(createTimeSeries(sensorReading)).build();
+        Properties properties = PropertyLoader.loadProperties(TEST_PROPERTIES_FILENAME);
+
+        HttpClient httpClient = HttpClient.newHttpClient();
+
+        Remote.WriteRequest.Builder writeRequestBuilder = Remote.WriteRequest.newBuilder();
+
+        for(SensorReading sensorReading : sensorReadings) {
+            writeRequestBuilder.addTimeseries(createTimeSeries(sensorReading));
+        }
+
+        Remote.WriteRequest writeRequest =  writeRequestBuilder.build();
 
         byte[] compressed = Snappy.compress(writeRequest.toByteArray());
 
@@ -63,8 +75,12 @@ public class SensorQueryServiceStepDefinitions {
         assertEquals(204, response.statusCode());
     }
 
-    @Then("Sending a sensor query request should return an appropriate response")
+    @Then("sending a sensor query request should return an appropriate response")
     public void sendSensorQueryRequest() throws IOException, URISyntaxException, InterruptedException {
+        if(sensorReadings.isEmpty()) {
+            throw new RuntimeException("No sensor readings created - use \"Given a sensor reading...\" and \"When corresponding samples are written to Prometheus\" first");
+        }
+
         Properties properties = PropertyLoader.loadProperties(TEST_PROPERTIES_FILENAME);
 
         HttpClient httpClient = HttpClient.newHttpClient();
@@ -77,56 +93,30 @@ public class SensorQueryServiceStepDefinitions {
         String start = dateFormat.format(Date.from(Instant.ofEpochMilli(first.timestamp()-10))); // 10ms before
         String end = dateFormat.format(Date.from(Instant.ofEpochMilli(last.timestamp()+1000))); // 1s after
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(String.format(
-                        properties.getProperty(IOT_SENSOR_QUERY_SERVICE_BASE_URL_PROP) +
-                        properties.getProperty(IOT_SENSOR_QUERY_SERVICE_SENSOR_PATH) +
-                        "%s?start=%s&end=%s", first.sensorId(), start, end)))
-                .GET()
-                .header("Authorization", getBasicAuthenticationHeader("user", "password"))
-                .build();
-
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = sendQueryServiceRequest(
+            httpClient,
+            properties.getProperty(IOT_SENSOR_QUERY_SERVICE_USERNAME_PROP),
+            properties.getProperty(IOT_SENSOR_QUERY_SERVICE_PASSWORD_PROP),
+            properties.getProperty(IOT_SENSOR_QUERY_SERVICE_BASE_URL_PROP),
+            properties.getProperty(IOT_SENSOR_QUERY_SERVICE_SENSOR_PATH),
+            String.format("%s?start=%s&end=%s", first.sensorId(), start, end)
+        );
 
         String body = response.body();
-
-        int count = sensorReadings.size();
-        Double[] values = new Double[count];
-        int index = 0;
-        double min = Double.MAX_VALUE;
-        double max = Double.MIN_VALUE;
-        double total = 0;
 
         assertTrue(body.contains("\"groupId\":\"" + first.groupId() + "\""));
         assertTrue(body.contains("\"id\":\"" + first.sensorId() + "\""));
         assertTrue(body.contains("\"sensorType\":\"" + first.sensorType() + "\""));
 
-        for(SensorReading sensorReading : sensorReadings) {
-            double value = sensorReading.value();
-
-            if(value < min) min = value;
-            if(value > max) max = value;
-
-            total += value;
-
-            values[index++] = value;
-        }
-
-        double mean = total / count;
-
-        double median = count % 2 == 0 ?
-                (values[count/2 - 1] + values[count/2]) / 2 :
-                values[count/2];
-
-        assertTrue(body.contains("\"mean\":" + roundDoubleTo2DecimalPlaces(mean)));
-        assertTrue(body.contains("\"median\":" + roundDoubleTo2DecimalPlaces(median)));
-        assertTrue(body.contains("\"min\":" + min));
-        assertTrue(body.contains("\"max\":" + max));
-        assertTrue(body.contains("\"count\":" + count));
+        assertAggregatedValues(body);
     }
 
-    @Then("Sending a sensor group query request should return an appropriate response")
+    @Then("sending a sensor group query request should return an appropriate response")
     public void sendSensorGroupQueryRequest() throws IOException, URISyntaxException, InterruptedException {
+        if(sensorReadings.isEmpty()) {
+            throw new RuntimeException("No sensor readings created - use \"Given a sensor reading...\" and \"When corresponding samples are written to Prometheus\" first");
+        }
+
         Properties properties = PropertyLoader.loadProperties(TEST_PROPERTIES_FILENAME);
 
         HttpClient httpClient = HttpClient.newHttpClient();
@@ -139,50 +129,20 @@ public class SensorQueryServiceStepDefinitions {
         String start = dateFormat.format(Date.from(Instant.ofEpochMilli(first.timestamp()-10))); // 10ms before
         String end = dateFormat.format(Date.from(Instant.ofEpochMilli(last.timestamp()+1000))); // 1s after
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(String.format(
-                        properties.getProperty(IOT_SENSOR_QUERY_SERVICE_BASE_URL_PROP) +
-                                properties.getProperty(IOT_SENSOR_QUERY_SERVICE_SENSOR_GROUP_PATH) +
-                                "%s?start=%s&end=%s", first.groupId(), start, end)))
-                .GET()
-                .header("Authorization", getBasicAuthenticationHeader("user", "password"))
-                .build();
-
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = sendQueryServiceRequest(
+            httpClient,
+            properties.getProperty(IOT_SENSOR_QUERY_SERVICE_USERNAME_PROP),
+            properties.getProperty(IOT_SENSOR_QUERY_SERVICE_PASSWORD_PROP),
+            properties.getProperty(IOT_SENSOR_QUERY_SERVICE_BASE_URL_PROP),
+            properties.getProperty(IOT_SENSOR_QUERY_SERVICE_SENSOR_GROUP_PATH),
+            String.format("%s?start=%s&end=%s", first.groupId(), start, end)
+        );
 
         String body = response.body();
 
-        int count = sensorReadings.size();
-        Double[] values = new Double[count];
-        int index = 0;
-        double min = Double.MAX_VALUE;
-        double max = Double.MIN_VALUE;
-        double total = 0;
-
         assertTrue(body.contains("\"groupId\":\"" + first.groupId() + "\""));
 
-        for(SensorReading sensorReading : sensorReadings) {
-            double value = sensorReading.value();
-
-            if(value < min) min = value;
-            if(value > max) max = value;
-
-            total += value;
-
-            values[index++] = value;
-        }
-
-        double mean = total / count;
-
-        double median = count % 2 == 0 ?
-                (values[count/2 - 1] + values[count/2]) / 2 :
-                values[count/2];
-
-        assertTrue(body.contains("\"mean\":" + roundDoubleTo2DecimalPlaces(mean)));
-        assertTrue(body.contains("\"median\":" + roundDoubleTo2DecimalPlaces(median)));
-        assertTrue(body.contains("\"min\":" + min));
-        assertTrue(body.contains("\"max\":" + max));
-        assertTrue(body.contains("\"count\":" + count));
+        assertAggregatedValues(body);
     }
 
     private double roundDoubleTo2DecimalPlaces(double input) {
@@ -200,9 +160,51 @@ public class SensorQueryServiceStepDefinitions {
             .build();
     }
 
-    private static String getBasicAuthenticationHeader(String username, String password) {
+    private String getBasicAuthenticationHeader(String username, String password) {
         String valueToEncode = username + ":" + password;
 
         return "Basic " + Base64.getEncoder().encodeToString(valueToEncode.getBytes());
+    }
+
+    private HttpResponse<String> sendQueryServiceRequest(HttpClient httpClient, String username, String password, String baseUrl, String path, String query) throws URISyntaxException, IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(new URI(String.format(baseUrl + path + "/" + query)))
+            .GET()
+            .header("Authorization", getBasicAuthenticationHeader(username, password))
+            .build();
+
+        return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    private void assertAggregatedValues(String body) {
+        int count = sensorReadings.size();
+        Double[] values = new Double[count];
+        int index = 0;
+        double min = Double.MAX_VALUE;
+        double max = Double.MIN_VALUE;
+        double total = 0;
+
+        for(SensorReading sensorReading : sensorReadings) {
+            double value = sensorReading.value();
+
+            if(value < min) min = value;
+            if(value > max) max = value;
+
+            total += value;
+
+            values[index++] = value;
+        }
+
+        double mean = total / count;
+
+        double median = count % 2 == 0 ?
+                (values[count/2 - 1] + values[count/2]) / 2 :
+                values[count/2];
+
+        assertTrue(body.contains("\"mean\":" + roundDoubleTo2DecimalPlaces(mean)));
+        assertTrue(body.contains("\"median\":" + roundDoubleTo2DecimalPlaces(median)));
+        assertTrue(body.contains("\"min\":" + min));
+        assertTrue(body.contains("\"max\":" + max));
+        assertTrue(body.contains("\"count\":" + count));
     }
 }

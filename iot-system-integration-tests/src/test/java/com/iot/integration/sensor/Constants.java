@@ -13,4 +13,6 @@ public class Constants {
     public static final String IOT_SENSOR_QUERY_SERVICE_BASE_URL_PROP = "iot.sensor.query-service.base-url";
     public static final String IOT_SENSOR_QUERY_SERVICE_SENSOR_PATH = "iot.sensor.query-service.sensor-path";
     public static final String IOT_SENSOR_QUERY_SERVICE_SENSOR_GROUP_PATH = "iot.sensor.query-service.sensor-group-path";
+    public static final String IOT_SENSOR_QUERY_SERVICE_USERNAME_PROP = "iot.sensor.query-service.username";
+    public static final String IOT_SENSOR_QUERY_SERVICE_PASSWORD_PROP = "iot.sensor.query-service.password";
 }
