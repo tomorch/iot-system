@@ -7,29 +7,21 @@ import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.prometheus.sink.PrometheusSink;
 import org.apache.flink.formats.json.JsonDeserializationSchema;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.util.Properties;
 
+import static com.iot.sensor.collector.Constants.*;
+
 public class IoTSensorReadingCollector {
-    private static final Logger log = LoggerFactory.getLogger(IoTSensorReadingCollector.class);
-
-    private static final String APPLICATION_PROPERTIES_FILENAME = "application.properties";
-
-    private static final String KAFKA_BOOTSTRAP_SERVERS_PROP = "kafka.bootstrap-servers";
-    private static final String KAFKA_TOPICS_PROP = "kafka.topics";
-    private static final String KAFKA_CONSUMER_GROUP_PROP = "kafka.consumer-group";
-
-    private static final String PROMETHEUS_WRITE_URL_PROP = "prometheus.write.url";
-
     public static void main(String[] args) throws Exception {
+        // load property file
         Properties properties = new Properties();
         try (InputStream is = IoTSensorReadingCollector.class.getResourceAsStream("/" + APPLICATION_PROPERTIES_FILENAME)) {
             properties.load(is);
         }
 
+        // initialise the execution environment
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         // create the kafka source
