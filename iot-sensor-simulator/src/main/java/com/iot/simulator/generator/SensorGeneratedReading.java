@@ -1,5 +1,5 @@
 package com.iot.simulator.generator;
 
-import com.iot.model.SensorReading;
+import com.iot.sensor.model.SensorReading;
 
 public record SensorGeneratedReading(SensorReading sensorReading, String topic) { }

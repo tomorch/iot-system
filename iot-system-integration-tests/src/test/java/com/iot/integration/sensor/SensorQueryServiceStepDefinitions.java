@@ -1,6 +1,6 @@
 package com.iot.integration.sensor;
 
-import com.iot.model.SensorReading;
+import com.iot.sensor.model.SensorReading;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;

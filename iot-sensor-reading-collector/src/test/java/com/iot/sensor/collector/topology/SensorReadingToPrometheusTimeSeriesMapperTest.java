@@ -1,6 +1,6 @@
 package com.iot.sensor.collector.topology;
 
-import com.iot.model.SensorReading;
+import com.iot.sensor.model.SensorReading;
 import org.apache.flink.connector.prometheus.sink.PrometheusTimeSeries;
 import org.junit.jupiter.api.Test;
 

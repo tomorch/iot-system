@@ -1,6 +1,6 @@
 package com.iot.simulator.generator;
 
-import com.iot.model.SensorReading;
+import com.iot.sensor.model.SensorReading;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

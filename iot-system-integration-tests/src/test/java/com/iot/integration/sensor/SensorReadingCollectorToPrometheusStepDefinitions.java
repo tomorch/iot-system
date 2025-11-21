@@ -1,6 +1,6 @@
 package com.iot.integration.sensor;
 
-import com.iot.model.SensorReading;
+import com.iot.sensor.model.SensorReading;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.Given;

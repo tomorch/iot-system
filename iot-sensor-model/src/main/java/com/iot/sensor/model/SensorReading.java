@@ -1,4 +1,4 @@
-package com.iot.model;
+package com.iot.sensor.model;
 
 public record SensorReading(
         String id,

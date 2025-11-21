@@ -1,7 +1,7 @@
 package com.iot.sensor.collector;
 
 import com.iot.sensor.collector.topology.SensorReadingToPrometheusTimeSeriesMapper;
-import com.iot.model.SensorReading;
+import com.iot.sensor.model.SensorReading;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.prometheus.sink.PrometheusSink;
