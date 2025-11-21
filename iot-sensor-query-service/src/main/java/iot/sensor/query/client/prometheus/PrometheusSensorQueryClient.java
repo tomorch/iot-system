@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PrometheusSensorQueryClient implements ISensorQueryClient {
-    private static final int DEFAULT_STEP_SECONDS = 1;
+    private static final int DEFAULT_STEP_INTERVAL_SECONDS = 30;
     private static final String QUERY_PATH = "/query_range";
 
     @Autowired
@@ -21,7 +21,7 @@ public class PrometheusSensorQueryClient implements ISensorQueryClient {
     @Override
     public SensorQueryResult executeSensorQuery(String sensorId, String start, String end) {
         String query = String.format("query=sensor_value{sensor_id=\"%s\"}", sensorId)
-            + String.format("&step=%ds", DEFAULT_STEP_SECONDS)
+            + String.format("&step=%ds", DEFAULT_STEP_INTERVAL_SECONDS)
             + String.format("&start=%s", start)
             + String.format("&end=%s", end);
 
@@ -37,7 +37,7 @@ public class PrometheusSensorQueryClient implements ISensorQueryClient {
     @Override
     public SensorGroupQueryResult executeSensorGroupQuery(String groupId, String start, String end) {
         String query = String.format("query=sensor_value{group_id=\"%s\"}", groupId)
-            + String.format("&step=%ds", DEFAULT_STEP_SECONDS)
+            + String.format("&step=%ds", DEFAULT_STEP_INTERVAL_SECONDS)
             + String.format("&start=%s", start)
             + String.format("&end=%s", end);
 
