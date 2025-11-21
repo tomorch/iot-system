@@ -20,14 +20,16 @@ public class PrometheusResponseTransformer {
                                 result.metric().sensor_id(),
                                 result.metric().sensor_type(), result.metric().group_id()));
 
-        if(sensorInfo.isEmpty()) {
-            return new SensorQueryResult(
+        return sensorInfo.map(info -> new SensorQueryResult(
+                    info,
+                    calculateAggregateResult(response.data().result())
+                )
+            )
+            .orElseGet(() -> new SensorQueryResult(
                 new SensorInfo(sensorId, null, null),
                 new SensorAggregatedReadingResult(0, 0, 0, 0, 0)
-            );
-        }
-
-        return new SensorQueryResult(sensorInfo.get(), calculateAggregateResult(response.data().result()));
+            )
+        );
     }
 
     public SensorGroupQueryResult transformToSensorGroupQueryResult(String groupId, PrometheusQueryResponse response) {
@@ -47,6 +49,7 @@ public class PrometheusResponseTransformer {
         Double[] values = new Double[count];
         int index = 0;
 
+        // iterate over the results populating the values array and adding to the total
         for(PrometheusResult result : results) {
             double value = Double.parseDouble(result.values()[0].value());
 
@@ -58,15 +61,16 @@ public class PrometheusResponseTransformer {
             values[index++] = value;
         }
 
+        // calculate mean and median averages
         double mean = total / count;
         double median = count % 2 == 0 ?
                 (values[count/2 - 1] + values[count/2]) / 2 :
                 values[count/2];
 
-        return new SensorAggregatedReadingResult(roundDoubleTo2DecimalPlaces(mean), roundDoubleTo2DecimalPlaces(median), min, max, count);
+        return new SensorAggregatedReadingResult(roundTo2DecimalPlaces(mean), roundTo2DecimalPlaces(median), min, max, count);
     }
 
-    private double roundDoubleTo2DecimalPlaces(double input) {
+    private double roundTo2DecimalPlaces(double input) {
         return Math.round(input * 100.0) / 100.0;
     }
 }
