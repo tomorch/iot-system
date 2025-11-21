@@ -1,0 +1,16 @@
+prometheus:
+  http:
+    base-url: "http://localhost:9090/api/v1"
+
+security:
+  access-control:
+    users:
+      - username: "user"
+        password: "{bcrypt}$2a$12$nrkRGqkBX/uHuWDe.zebUOACVgk0VyAP.Af3HlWOgfCGzzSikQgWu"
+
+logging:
+  level:
+    root: INFO
+    com.iot.simulator: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"

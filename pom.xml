@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.iot.system</groupId>
+    <artifactId>iot-system</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <name>IoT System</name>
+    <description>Parent POM for IoT System components</description>
+
+    <properties>
+        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring-boot.version>3.5.7</spring-boot.version>
+        <kafka.version>3.3.10</kafka.version>
+        <jackson.version>2.19.2</jackson.version>
+        <cucumber.version>7.31.0</cucumber.version>
+    </properties>
+
+    <modules>
+        <module>iot-sensor-model</module>
+        <module>iot-sensor-simulator</module>
+        <module>iot-sensor-reading-collector</module>
+        <module>iot-sensor-query-service</module>
+        <module>iot-system-integration-tests</module>
+    </modules>
+
+</project>
