@@ -107,5 +107,4 @@ public class SensorReadingCollectorToPrometheusStepDefinitions {
             assertTrue(body.contains(Double.toString(sensorReading.value())));
         }
     }
-
 }
