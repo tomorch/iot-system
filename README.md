@@ -21,7 +21,7 @@ specific timeframe.
 1. Navigate to the root directory of the project.
 2. Build the project: **mvn clean install**
 3. Deploy the infra dependencies: **docker-compose -up d** (ensure all services start up successfully)
-4. Start the IoT Sensor Collector Application: **java -jar ./iot-sensor-reading-collector/target/iot-sensor-reading-collector-1.0.0-jar-with-dependencies.jar > collector.log &**
+4. Start the IoT Sensor Collector Application: **java --add-opens "java.base/java.util=ALL-UNNAMED" -jar ./iot-sensor-reading-collector/target/iot-sensor-reading-collector-1.0.0-jar-with-dependencies.jar > collector.log &**
 5. Start the IoT Sensor Query Service: **mvn -f ./iot-sensor-query-service/ spring-boot:run > query_service.log &**
 6. Start the IoT Sensor Simulator Application: **mvn -f ./iot-sensor-simulator/ spring-boot:run > simulator.log &**
 7. (Optional) Run the integration tests: **mvn failsafe:integration-test**
