@@ -8,6 +8,7 @@ import iot.sensor.query.response.SensorInfo;
 import iot.sensor.query.response.SensorQueryResult;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,6 +61,9 @@ public class PrometheusResponseTransformer {
 
             values[index++] = value;
         }
+
+        // sort the values in ascending order
+        Arrays.sort(values);
 
         // calculate mean and median averages
         double mean = total / count;
