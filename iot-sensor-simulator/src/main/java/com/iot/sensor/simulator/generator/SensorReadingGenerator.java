@@ -2,7 +2,6 @@ package com.iot.sensor.simulator.generator;
 
 import com.iot.sensor.model.SensorReading;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
