@@ -2,6 +2,7 @@ package com.iot.sensor.simulator.scheduler;
 
 import com.iot.sensor.simulator.generator.SensorReadingGenerator;
 import com.iot.sensor.simulator.service.KafkaProducerService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,15 +11,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 @Component
+@RequiredArgsConstructor
 @ManagedResource
 public class SensorSimulationScheduler {
     private static final Logger log = LoggerFactory.getLogger(SensorSimulationScheduler.class);
 
-    @Autowired
-    private KafkaProducerService kafkaProducerService;
+    private final KafkaProducerService kafkaProducerService;
 
-    @Autowired
-    private SensorReadingGenerator sensorReadingGenerator;
+    private final SensorReadingGenerator sensorReadingGenerator;
 
     @Scheduled(fixedRate = 1000)
     public void publishSensorReadings() {
