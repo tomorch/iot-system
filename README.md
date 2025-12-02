@@ -32,20 +32,20 @@ The sensor readings can be queried as follows:
 
 http://localhost:8080/api/v1/sensor/{sensorId}?start={start}&end={end}
 
-Where sensorId is an alphanumeric string and start and end are ISO 8601 formatted date strings. For example:
+Where `sensorId` is an alphanumeric string and start and end are ISO 8601 formatted date strings. For example:
 
 http://localhost:8080/api/v1/sensor/hm3?start=2025-11-21T00:00:00.000Z&end=2025-11-21T23:00:00.000Z
 
-Or to query a sensor group (groupId is also alphanumeric):
+Or to query a sensor group (`groupId` is also alphanumeric):
 
 http://localhost:8080/api/v1/sensor/group/medical?start=2025-11-21T00:00:00.000Z&end=2025-11-21T23:00:00.000Z
 
 The various components can be configured using their respective configuration files:
 
-- iot-sensor-query-service/src/main/resources/application.yml
-- iot-sensor-reading-collector/src/main/resources/application.properties
-- iot-sensor-simulator/src/main/resources/application.yml
-- iot-system-integration-tests/src/test/resources/test.properties
+- `iot-sensor-query-service/src/main/resources/application.yml`
+- `iot-sensor-reading-collector/src/main/resources/application.properties`
+- `iot-sensor-simulator/src/main/resources/application.yml`
+- `iot-system-integration-tests/src/test/resources/test.properties`
 
 ---
 
@@ -58,7 +58,7 @@ The various components can be configured using their respective configuration fi
   - Streaming data processing performed by Flink for:
     - Performance - excels at real-time, low-latency workloads.
     - Scalability - elastic scaling can be configured.
-    - Reliability - robust fault tolerance providing through checkpoint mechanism, which can be configured for durable storage if required.
+    - Reliability - robust fault tolerance provided through checkpoint mechanism, which can be configured for durable storage if required.
     - Operability - deployable in containerised form and/or as a managed service.
     - Extensibility - topology can easily be extended to perform additional computation if required.
   - Persistence handled by Prometheus given the appropriate use case for a Time Series Database, query functionality and ease of deployment and operation as a managed service.
@@ -74,9 +74,9 @@ The various components can be configured using their respective configuration fi
 AWS would be the ideal production environment as Amazon provides managed services for a number of key choices of technology, namely Kafka (MSK), Flink (MSF) and Prometheus (AMP).
 In this configuration the Flink application is deployed as a "job" onto the managed cluster. The cluster is configured by default to auto-scale depending on container CPU utilisation, but can be configured to target other CloudWatch-provided metrics. The Flink dashboard is also accessible, which provides convenient in-depth monitoring of the Flink topology.
 
-The IoT Sensor Query Service (as a stateless application) could be deployed cost-efficiently on any AWS infrastructure that supports auto-scaling (primarily in order to scale down the service is not in use). AWS Fargate ECS might be a sensible choice for this use case.
+The IoT Sensor Query Service (as a stateless application) could be deployed cost-efficiently on any AWS infrastructure that supports auto-scaling (primarily in order to scale down the service when not in use). AWS Fargate ECS might be a sensible choice for this use case.
 
-The system can be configured to stream and consume sensor readings from one or more Kafka topics. It may be necessary as the system evolves to support additional IoT sensor types and devices that generate large numbers (millions) of readings per hour, in which case it may be necessary to create dedicated Kafka topics that can be configured independently.
+The system can be configured to stream and consume sensor readings to/from one or more Kafka topics. It may be necessary as the system evolves to support additional IoT sensor types and devices that generate large numbers (millions) of readings per hour, in which case it may be necessary to create dedicated Kafka topics that can be configured independently.
 
 ---
 
@@ -85,7 +85,7 @@ The system can be configured to stream and consume sensor readings from one or m
 - Performance tests - the system is currently lacking performance tests that validate that the system can accommodate a specified rate of simulated sensor readings while maintaining acceptable throughput and latency.
 - Component tests - the system is currently lacking component tests that validate that each component produces the expected output(s) for the given input(s) without relying on real infrastructure (Prometheus in this case).
 - Unit and Integration tests - are not comprehensive in their current state. **Note: there is a known issue with integration tests failing on the first run and then passing for all runs thereafter.**
-- Prometheus query optimisation - IoT Sensor Query Service is currently requesting all samples from Prometheus within a given date/time range rather than utilising the full and far more efficiency querying functionality provided by Prometheus.
+- Prometheus query optimisation - IoT Sensor Query Service is currently requesting all samples from Prometheus within a given date/time range rather than utilising the full and far more efficient querying functionality provided by Prometheus.
 - Message format - the system is currently transmitting sensor readings in JSON format rather than using Protobuf which would provide numerous benefits such as type-safety, faster (de)serialisation and support for backwards compatibility.
 - Build and deployment - the system could be fully built and deployed using Docker containers thereby eliminating the need for the user to have Java and Maven installed in order to operate the system.
 - Comments - the codebase is severely lacking comments in its current form.
