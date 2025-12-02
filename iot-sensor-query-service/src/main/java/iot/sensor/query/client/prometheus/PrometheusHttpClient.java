@@ -3,9 +3,9 @@ package iot.sensor.query.client.prometheus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import iot.sensor.query.client.prometheus.response.PrometheusQueryResponse;
 import iot.sensor.query.net.IHttpClientProvider;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -14,15 +14,14 @@ import java.net.URISyntaxException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+@RequiredArgsConstructor
 @Component
 public class PrometheusHttpClient {
     private static final Logger log = LoggerFactory.getLogger(PrometheusHttpClient.class);
 
-    @Autowired
-    private PrometheusHttpClientConfig config;
+    private final PrometheusHttpClientConfig config;
 
-    @Autowired
-    private IHttpClientProvider httpClientProvider;
+    private final IHttpClientProvider httpClientProvider;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 

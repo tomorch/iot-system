@@ -4,19 +4,18 @@ import iot.sensor.query.client.ISensorQueryClient;
 import iot.sensor.query.client.prometheus.response.PrometheusQueryResponse;
 import iot.sensor.query.response.SensorGroupQueryResult;
 import iot.sensor.query.response.SensorQueryResult;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
 public class PrometheusSensorQueryClient implements ISensorQueryClient {
     private static final String DEFAULT_STEP_INTERVAL = "5m";
     private static final String QUERY_PATH = "/query_range";
 
-    @Autowired
-    private PrometheusHttpClient httpClient;
+    private final PrometheusHttpClient httpClient;
 
-    @Autowired
-    private PrometheusResponseTransformer responseTransformer;
+    private final PrometheusResponseTransformer responseTransformer;
 
     @Override
     public SensorQueryResult executeSensorQuery(String sensorId, String start, String end) {
