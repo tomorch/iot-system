@@ -1,7 +1,7 @@
 package com.iot.sensor.simulator.generator;
 
 import com.iot.sensor.model.SensorReading;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @Component
 public class SensorReadingGenerator {
-    @Autowired
-    private SensorReadingGeneratorConfig sensorReadingGeneratorConfig;
+    private final SensorReadingGeneratorConfig sensorReadingGeneratorConfig;
 
     public List<SensorGeneratedReading> generateReadings() {
         final Random rand = new Random();

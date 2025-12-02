@@ -4,14 +4,14 @@ import iot.sensor.query.client.ISensorQueryClient;
 import iot.sensor.query.response.*;
 import iot.sensor.query.utils.DateParamValidator;
 import iot.sensor.query.utils.IdentifierParamValidator;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("api/v1/sensor")
 public class SensorQueryRestController {
-    @Autowired
-    private ISensorQueryClient sensorQueryClient;
+    private final ISensorQueryClient sensorQueryClient;
 
     @GetMapping(path = "/{sensorId}", produces = "application/json")
     public AbstractSensorQueryResponse querySensorReadings(
