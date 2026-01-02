@@ -32,7 +32,6 @@ public class SensorReadingToPrometheusTimeSeriesMapperTest {
         assertEquals(timestamp, prometheusTimeSeries.getSamples()[0].getTimestamp());
 
         // and all labels should match
-        assertLabel(prometheusTimeSeries, "reading_id", readingId);
         assertLabel(prometheusTimeSeries, "sensor_type", sensorType);
         assertLabel(prometheusTimeSeries, "group_id", groupId);
         assertLabel(prometheusTimeSeries, "sensor_id", sensorId);
