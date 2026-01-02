@@ -18,7 +18,6 @@ public class SensorReadingToPrometheusTimeSeriesMapper implements MapFunction<Se
             .addLabel("sensor_id", sensorReading.sensorId())
             .addLabel("sensor_type", sensorReading.sensorType())
             .addLabel("group_id", sensorReading.groupId())
-            .addLabel("reading_id", sensorReading.id())
             .addSample(sensorReading.value(), sensorReading.timestamp())
             .build();
     }
