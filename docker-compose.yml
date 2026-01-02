@@ -3,7 +3,7 @@ services:
     image: apache/kafka:3.9.1
     container_name: kafka
     expose:
-      - '9092:9092'
+      - '9092'
     ports:
       - '29092:29092'
     environment:
